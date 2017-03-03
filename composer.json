@@ -1,0 +1,15 @@
+{
+    "name": "owwo/xiami-cli",
+    "description": "The command line interface for Xiami.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "owwo",
+            "email": "owwo@outlook.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "^3.2"
+    }
+}
