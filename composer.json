@@ -9,6 +9,9 @@
             "email": "owwo@outlook.com"
         }
     ],
+    "autoload": {
+      "psr-4": { "Xiami\\Console\\" : "src/" }
+    },
     "require": {
         "symfony/console": "^3.2"
     }
