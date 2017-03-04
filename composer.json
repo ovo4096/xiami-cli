@@ -13,6 +13,7 @@
       "psr-4": { "Xiami\\Console\\" : "src/" }
     },
     "require": {
-        "symfony/console": "^3.2"
+        "symfony/console": "^3.2",
+        "guzzlehttp/guzzle": "~6.0"
     }
 }
