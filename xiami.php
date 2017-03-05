@@ -4,8 +4,8 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Xiami\Console\Command\TestCommand;
-use Xiami\Console\Command\FavoritesCommand;
+use Xiami\Console\Commands\TestCommand;
+use Xiami\Console\Commands\FavoritesCommand;
 
 $application = new Application();
 $application->add(new TestCommand());

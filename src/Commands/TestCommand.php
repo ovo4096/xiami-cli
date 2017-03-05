@@ -1,6 +1,6 @@
 <?php
 
-namespace Xiami\Console\Command;
+namespace Xiami\Console\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
