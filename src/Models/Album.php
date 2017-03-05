@@ -2,6 +2,6 @@
 
 namespace Xiami\Console\Models;
 
-class SongModel
+class Album
 {
 }

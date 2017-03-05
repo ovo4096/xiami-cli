@@ -2,6 +2,7 @@
 
 namespace Xiami\Console\Models;
 
-class CollectionModel
+class Artist
 {
+    public $name;
 }
