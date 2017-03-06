@@ -35,7 +35,7 @@ class FavoriteParser
 
             foreach ($artistMatches as $matche) {
                 $artist = new Artist();
-                $artist->name = $matche['name'];
+                $artist->name = html_entity_decode($matche['name'], ENT_QUOTES);
                 $song->artists[] = $artist;
             }
 
