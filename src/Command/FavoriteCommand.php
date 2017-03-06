@@ -19,7 +19,7 @@ class FavoriteCommand extends Command
         $this
             ->setName('favorite')
             ->setDefinition([
-                new InputArgument('type', InputArgument::OPTIONAL, 'The favorite type', 'songs'),
+                new InputArgument('type', InputArgument::OPTIONAL, 'The favorite type', 'song'),
                 new InputOption('page', 'p', InputOption::VALUE_REQUIRED, 'Page number', '1'),
             ])
             ->setDescription('Show your favorite songs');
@@ -27,8 +27,24 @@ class FavoriteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $type = $input->getArgument('type');
+
+        switch ($type) {
+            case 'song':
+                $this->handleSongType($input, $output);
+                break;
+            default:
+                $output->writeln('<comment>I did nothing.</comment>');
+                break;
+        }
+    }
+
+    protected function handleSongType(InputInterface $input, OutputInterface $output)
+    {
+        $page = $input->getOption('page');
+
         $parser = new FavoriteSongPageParser(
-            PageGrabber::getFavoriteSongPage(1)
+            PageGrabber::getFavoriteSongPage($page)
         );
 
         $table = new Table($output);
