@@ -7,7 +7,7 @@ use Xiami\Console\Models\Artist;
 
 class FavoriteParser
 {
-    public static function Songs($html)
+    public static function getSongs($html)
     {
         $songMatches = [];
         preg_match_all(
