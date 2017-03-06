@@ -2,8 +2,8 @@
 
 namespace Xiami\Console\Parser;
 
-use Xiami\Console\Models\Song;
-use Xiami\Console\Models\Artist;
+use Xiami\Console\Model\Song;
+use Xiami\Console\Model\Artist;
 
 class FavoriteParser
 {

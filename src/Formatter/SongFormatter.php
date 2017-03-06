@@ -2,7 +2,7 @@
 
 namespace Xiami\Console\Formatter;
 
-use Xiami\Console\Models\Song;
+use Xiami\Console\Model\Song;
 
 class SongFormatter
 {

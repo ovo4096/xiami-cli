@@ -1,6 +1,6 @@
 <?php
 
-namespace Xiami\Console\Models;
+namespace Xiami\Console\Model;
 
 class Song
 {

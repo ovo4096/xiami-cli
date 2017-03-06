@@ -7,10 +7,10 @@ error_reporting(E_ALL);
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Xiami\Console\Commands\TestCommand;
-use Xiami\Console\Commands\FavoritesCommand;
+use Xiami\Console\Command\TestCommand;
+use Xiami\Console\Command\FavoriteCommand;
 
 $application = new Application();
 $application->add(new TestCommand());
-$application->add(new FavoritesCommand());
+$application->add(new FavoriteCommand());
 $application->run();
