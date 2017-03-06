@@ -24,8 +24,8 @@ class FavoriteSongPageParser extends Parser
             $song->name = html_entity_decode($matche['name'], ENT_QUOTES);
             $song->inStock = $matche['inStock'] === 'checked';
             $song->rate = $matche['rate'] + 0;
+            $song->artists = $this->getArtists($matche['artists']);
 
-            $this->getArtists($matche['artists']);
             $songs[] = $song;
         }
 
@@ -52,7 +52,7 @@ class FavoriteSongPageParser extends Parser
             $this->html,
             $matches
         );
-        
+
         return $matches[0][0] + 0;
     }
 
