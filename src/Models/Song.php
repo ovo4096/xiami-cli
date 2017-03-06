@@ -14,6 +14,6 @@ class Song
     public $id;
     public $name;
     public $rate;
-    public $artists = array();
+    public $artists = [];
     public $inStock;
 }

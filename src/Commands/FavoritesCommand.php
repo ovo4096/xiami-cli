@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use Xiami\Console\Grabber\FavoriteGrabber;
+use Xiami\Console\Formatter\SongFormatter;
 
 class FavoritesCommand extends Command
 {
@@ -20,17 +21,16 @@ class FavoritesCommand extends Command
         $songs = FavoriteGrabber::getSongs(2);
         $table = new Table($output);
         $table->setHeaders(['In Stock', 'ID', 'Name', 'Artists', 'Rate']);
+
         foreach ($songs as $song) {
-            $artistNames = array_map(function ($artist) {
-                return $artist->name;
-            }, $song->artists);
+            $songFormatter = new SongFormatter($song);
 
             $table->addRow([
                 $song->inStock ? 'Yes' : 'No',
                 $song->id,
                 $song->name,
-                implode(', ', $artistNames),
-                $song->rate
+                $songFormatter->artistsToString(),
+                $songFormatter->rateToString()
             ]);
         }
         $table->render();
