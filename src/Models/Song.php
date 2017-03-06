@@ -11,7 +11,9 @@ class Song
     const RATE_HIGH = 4;
     const RATE_HIGHER = 5;
 
+    public $id;
     public $name;
     public $rate;
     public $artists = array();
+    public $inStock;
 }
