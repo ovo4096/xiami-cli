@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Xiami\Console\Model\User;
 
 class LoginCommand extends Command
 {
@@ -16,8 +18,16 @@ class LoginCommand extends Command
         $this
             ->setName('login')
             ->setDefinition([
-                new InputArgument('username', InputArgument::REQUIRED, 'Your username'),
-                new InputArgument('password', InputArgument::REQUIRED, 'Your password')
+                new InputArgument(
+                    'username',
+                    InputArgument::REQUIRED,
+                    'Your username'
+                ),
+                new InputArgument(
+                    'password',
+                    InputArgument::REQUIRED,
+                    'Your password'
+                )
             ])
             ->setDescription('login description')
             ->setHelp('login help');
@@ -31,7 +41,14 @@ class LoginCommand extends Command
         ]);
 
         $client->get('https://login.xiami.com/member/login');
-        $xiamiToken = $jar->toArray()[1];
+
+        $cookies = $jar->toArray();
+        $xiamiToken = $cookies[
+            array_search(
+                '_xiamitoken',
+                array_column($cookies, 'Name')
+            )
+        ];
 
         $response = $client->post('https://login.xiami.com/passport/login', [
             'form_params' => [
@@ -48,18 +65,58 @@ class LoginCommand extends Command
         if (!$result->status) {
             switch ($result->msg) {
                 case '账号或密码错误':
-                    $output->writeln('<error>Incorrect username or password!</error>');
+                    $output->writeln('<error>Incorrect username or password</error>');
                     break;
                 case '请输入验证码':
-                    $output->write('<error>Has exceeded the maximum number of retries!</error> ');
-                    $output->writeln('(<info>Tip: change another IP and try again</info>)');
+                    $output->writeln('<error>Has exceeded the maximum number of retries</error>');
+                    $output->writeln('<info>Tip: change another IP and try again</info>');
                     break;
                 default:
-                    $output->writeln('<error>unknown error!</error>');
+                    $output->writeln('<error>unknown error</error>');
                     break;
             }
-        } else {
-            $output->writeln('<info>login successful!</info>');
+            return;
         }
+        $output->writeln('<info>login successful</info>');
+
+        $cookies = $jar->toArray();
+        $authToken = $cookies[
+            array_search(
+                'member_auth',
+                array_column($cookies, 'Name')
+            )
+        ]['Value'];
+        $userInfoArray = explode(
+            '"',
+            urldecode(
+                $cookies[
+                    array_search(
+                        'user',
+                        array_column($cookies, 'Name')
+                    )
+                ]['Value']
+            )
+        );
+
+        $user = new User();
+        $user->id = $userInfoArray[0] + 0;
+        $user->name = $userInfoArray[1];
+        $matches = [];
+        preg_match(
+            '/(?<=>).*(?=<)/',
+            $userInfoArray[5],
+            $matches
+        );
+        $user->level = $matches[0];
+        $user->playCount = $userInfoArray[8] + 0;
+        $user->loginTimestamp = $userInfoArray[10] + 0;
+        $user->authToken = $authToken;
+        $user->followersCount = $userInfoArray[7] + 0;
+        $user->followingCount = $userInfoArray[6] + 0;
+
+        $cache = new FilesystemAdapter('xiami-cli');
+        $userCache = $cache->getItem('user');
+        $userCache->set($user);
+        $cache->save($userCache);
     }
 }
