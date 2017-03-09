@@ -44,7 +44,22 @@ class LoginCommand extends Command
             ],
         ]);
 
-        var_dump((string) $response->getBody());
-        die();
+        $result = json_decode((string) $response->getBody());
+        if (!$result->status) {
+            switch ($result->msg) {
+                case '账号或密码错误':
+                    $output->writeln('<error>Incorrect username or password!</error>');
+                    break;
+                case '请输入验证码':
+                    $output->write('<error>Has exceeded the maximum number of retries!</error> ');
+                    $output->writeln('(<info>Tip: change another IP and try again</info>)');
+                    break;
+                default:
+                    $output->writeln('<error>unknown error!</error>');
+                    break;
+            }
+        } else {
+            $output->writeln('<info>login successful!</info>');
+        }
     }
 }
