@@ -9,8 +9,10 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Xiami\Console\Command\TestCommand;
 use Xiami\Console\Command\FavoriteCommand;
+use Xiami\Console\Command\LoginCommand;
 
 $application = new Application();
 $application->add(new TestCommand());
 $application->add(new FavoriteCommand());
+$application->add(new LoginCommand());
 $application->run();
