@@ -34,6 +34,14 @@ class LoginCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $cache = new FilesystemAdapter('xiami-cli');
+        $userCache = $cache->getItem('user');
+
+        if ($userCache->isHit()) {
+            $output->writeln('<error>You are already logged in</error>');
+            return;
+        }
+
         $jar = new CookieJar();
         $client = new Client([
             'cookies' => $jar
