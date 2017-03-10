@@ -1,5 +1,4 @@
 <?php
-
 namespace Xiami\Console\Grabber;
 
 use GuzzleHttp\Client;

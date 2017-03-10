@@ -1,5 +1,4 @@
 <?php
-
 namespace Xiami\Console\Parser;
 
 use Xiami\Console\Model\Song;
