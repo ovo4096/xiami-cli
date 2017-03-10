@@ -38,7 +38,8 @@ class LoginCommand extends Command
         $userCache = $cache->getItem('user');
 
         if ($userCache->isHit()) {
-            $output->writeln('<error>You are already logged in</error>');
+            $user = $userCache->get();
+            $output->writeln('<error>You are already logged in as ' . $user->name . '</error>');
             return;
         }
 
