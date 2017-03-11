@@ -14,6 +14,7 @@ class Song
     public $artistNames;
     public $composerNames;
     public $arrangerNames;
+    public $lyricLink;
     public $audioLinks = [];
 
     public static function getFromPlaylistJsonById($id)
@@ -34,14 +35,15 @@ class Song
     {
         $song = new Song();
         $song->id = $json->songId + 0;
-        $song->name = $json->songName;
+        $song->name = html_entity_decode($json->songName, ENT_QUOTES);
         $song->albumId = $json->albumId + 0;
-        $song->albumName = $json->album_name;
-        $song->artistNames = $json->artist;
-        $song->lyricerNames = $json->songwriters;
-        $song->composerNames = $json->composer;
-        $song->arrangerNames = $json->arrangement;
-
+        $song->albumName = html_entity_decode($json->album_name, ENT_QUOTES);
+        $song->artistNames = html_entity_decode($json->artist, ENT_QUOTES);
+        $song->lyricerNames = html_entity_decode($json->songwriters, ENT_QUOTES);
+        $song->composerNames = html_entity_decode($json->composer, ENT_QUOTES);
+        $song->arrangerNames = html_entity_decode($json->arrangement, ENT_QUOTES);
+        $song->lyricLink = $json->lyric_url;
+        
         usort($json->allAudios, function ($a, $b) {
             return $a->fileSize < $b->fileSize;
         });

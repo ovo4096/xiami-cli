@@ -5,11 +5,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Style\OutputStyle;
 use GuzzleHttp\Client;
 use Xiami\Console\Model\Song;
 use Xiami\Console\Exception\GetPlaylistJsonException;
+use Xiami\Console\Style\AwesomeStyle;
 
 class ShowCommand extends Command
 {
@@ -42,7 +43,7 @@ class ShowCommand extends Command
     {
         $id = $input->getArgument('id');
         $type = $input->getArgument('type');
-        $io = new SymfonyStyle($input, $output);
+        $io = new AwesomeStyle($input, $output);
         switch ($type) {
             case 'song':
                 $this->handleTypeOfSong($id, $io);
@@ -59,28 +60,45 @@ class ShowCommand extends Command
         }
     }
 
-    protected function handleTypeOfSong($id, SymfonyStyle $io)
+    protected function handleTypeOfSong($id, OutputStyle $io)
     {
         try {
             $song = Song::getFromPlaylistJsonById($id);
-            $io->newLine();
-            $io->text('<comment>' . $song->name . '</comment>');
-            $io->newLine();
-            if (!empty($song->artistNames)) {
-                $io->text('<info>Artist</info> : ' . $song->artistNames);
+            $io->title($song->name);
+            $io->section('Information');
+            $dtlist = [];
+            if (!empty($song->albumName)) {
+                $dtlist[] = array('<info>Album</>', $song->albumName);
             }
-            if (!empty($song->lyricerNames)) {
-                $io->text('<info>Lyricist</info> : ' . $song->lyricerNames);
+            if (!empty($song->artistNames)) {
+                $dtlist[] = array('<info>Artist</>', $song->artistNames);
+            }
+            if (!empty($song->lyricistNames)) {
+                $dtlist[] = array('<info>Lyricist</>', $song->lyricistNames);
             }
             if (!empty($song->composerNames)) {
-                $io->text('<info>Composer</info> : ' . $song->composerNames);
+                $dtlist[] = array('<info>Composer</>', $song->composerNames);
             }
             if (!empty($song->arrangerNames)) {
-                $io->text('<info>Arranger</info> : ' . $song->arrangerNames);
+                $dtlist[] = array('<info>Arranger</>', $song->arrangerNames);
             }
-            $io->newLine();
-            if (!empty($song->albumName)) {
-                $io->text('<info>Album</info> : ' . $song->albumName);
+            $io->description($dtlist);
+            $io->section('Download Links');
+            if (isset($song->audioLinks['LOSSLESS'])) {
+                $io->text('<info>Lossless Quality</>');
+                $io->listing($song->audioLinks['LOSSLESS']);
+            }
+            if (isset($song->audioLinks['HIGH'])) {
+                $io->text('<info>High Quality</>');
+                $io->listing($song->audioLinks['HIGH']);
+            }
+            if (isset($song->audioLinks['LOW'])) {
+                $io->text('<info>Low Quality</>');
+                $io->listing($song->audioLinks['LOW']);
+            }
+            if (!empty($song->lyricLink)) {
+                $io->text('<info>Lyric</>');
+                $io->listing([ $song->lyricLink ]);
             }
             $io->newLine();
         } catch (GetPlaylistJsonException $e) {
@@ -88,11 +106,11 @@ class ShowCommand extends Command
         }
     }
 
-    protected function handleTypeOfAlbum($id, SymfonyStyle $io)
+    protected function handleTypeOfAlbum($id, OutputStyle $io)
     {
     }
 
-    protected function handleTypeOfCollection($id, SymfonyStyle $io)
+    protected function handleTypeOfCollection($id, OutputStyle $io)
     {
     }
 }
