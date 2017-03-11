@@ -64,26 +64,25 @@ class ShowCommand extends Command
         try {
             $song = Song::getFromPlaylistJsonById($id);
             $io->newLine();
-            $io->table(
-                array(
-                    'Name',
-                    'Album',
-                    'Artist',
-                    'Lyricist',
-                    'Composer',
-                    'Arranger'
-                ),
-                array(
-                    array(
-                        $song->name,
-                        $song->albumName,
-                        $song->artistNames,
-                        $song->lyricistNames,
-                        $song->composerNames,
-                        $song->arrangerNames
-                    ),
-                )
-            );
+            $io->text('<comment>' . $song->name . '</comment>');
+            $io->newLine();
+            if (!empty($song->artistNames)) {
+                $io->text('<info>Artist</info> : ' . $song->artistNames);
+            }
+            if (!empty($song->lyricerNames)) {
+                $io->text('<info>Lyricist</info> : ' . $song->lyricerNames);
+            }
+            if (!empty($song->composerNames)) {
+                $io->text('<info>Composer</info> : ' . $song->composerNames);
+            }
+            if (!empty($song->arrangerNames)) {
+                $io->text('<info>Arranger</info> : ' . $song->arrangerNames);
+            }
+            $io->newLine();
+            if (!empty($song->albumName)) {
+                $io->text('<info>Album</info> : ' . $song->albumName);
+            }
+            $io->newLine();
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
         }
