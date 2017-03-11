@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use GuzzleHttp\Client;
+use Xiami\Console\Model\Song;
+use Xiami\Console\Exception\GetPlaylistJsonException;
 
 class ShowCommand extends Command
 {
@@ -59,42 +61,32 @@ class ShowCommand extends Command
 
     protected function handleTypeOfSong($id, SymfonyStyle $io)
     {
-        $client = new Client(
-            ['base_uri' => 'http://www.xiami.com/']
-        );
-
-        $response = $client->get("song/playlist/id/$id/object_name/default/object_id/0/cat/json");
-        $json = json_decode((string) $response->getBody());
-
-        if (!empty($json->message) || !$json->status) {
-            $io->error($json->message);
-            return;
+        try {
+            $song = Song::getFromPlaylistJsonById($id);
+            $io->newLine();
+            $io->table(
+                array(
+                    'Name',
+                    'Album',
+                    'Artist',
+                    'Lyricist',
+                    'Composer',
+                    'Arranger'
+                ),
+                array(
+                    array(
+                        $song->name,
+                        $song->albumName,
+                        $song->artistNames,
+                        $song->lyricistNames,
+                        $song->composerNames,
+                        $song->arrangerNames
+                    ),
+                )
+            );
+        } catch (GetPlaylistJsonException $e) {
+            $io->error($e->getMessage());
         }
-
-        $io->text('<info>' . $json->data->trackList[0]->songName . '</info>');
-        $io->newLine();
-
-        if (!empty($json->data->trackList[0]->album_name)) {
-            $io->text('所属专辑: ' . $json->data->trackList[0]->album_name);
-        }
-
-        if (!empty($json->data->trackList[0]->singers)) {
-            $io->text('演唱者: ' . $json->data->trackList[0]->singers);
-        }
-
-        if (!empty($json->data->trackList[0]->songwriters)) {
-            $io->text('作词: ' . $json->data->trackList[0]->songwriters);
-        }
-
-        if (!empty($json->data->trackList[0]->composer)) {
-            $io->text('作曲: ' . $json->data->trackList[0]->composer);
-        }
-
-        if (!empty($json->data->trackList[0]->arrangement)) {
-            $io->text('编曲: ' . $json->data->trackList[0]->arrangement);
-        }
-        
-        $io->newLine();
     }
 
     protected function handleTypeOfAlbum($id, SymfonyStyle $io)

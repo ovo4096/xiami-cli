@@ -1,9 +1,9 @@
 <?php
 namespace Xiami\Console\Grabber;
 
-class SongGrabber extends Grabber
+class SongGrabber
 {
-    public static function get($id)
+    public static function GetFromPlaylistJsonBySongId($id)
     {
         $client = self::getClient();
     }
