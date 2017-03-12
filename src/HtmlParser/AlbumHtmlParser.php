@@ -75,7 +75,7 @@ class AlbumHtmlParser extends HtmlParser
         try {
             $crawler = new Crawler($this->html);
             $crawlerSummaryDOM = $crawler->filter('[property="v:summary"]');
-            return trim($crawlerSummaryDOM->text());
+            return trim(preg_replace('/\<br(\s*)?\/?\>/i', "\n", $crawlerSummaryDOM->html()));
         } catch (\Exception $e) {
             return '';
         }

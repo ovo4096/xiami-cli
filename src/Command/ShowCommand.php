@@ -121,7 +121,7 @@ class ShowCommand extends Command
 
             if (!empty($album->summary)) {
                 $io->section('Summary');
-                $io->block($album->summary);
+                $io->writeln($album->summary);
             }
 
             if (count($album->trackList) !== 0) {
