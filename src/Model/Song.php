@@ -17,21 +17,21 @@ class Song
     public $lyricLink;
     public $audioLinks = [];
 
-    public static function getFromPlaylistJsonById($id)
+    public static function getById($id)
     {
         $client = new Client();
         $response = $client->get("http://www.xiami.com/song/playlist/id/$id/object_name/default/object_id/0/cat/json");
 
         $json = json_decode((string) $response->getBody());
 
-        if (!empty($json->message) || !$json->status) {
+        if ((!empty($json->message) && count($json->data->trackList) === 0) || !$json->status) {
             throw new GetPlaylistJsonException($json->message);
         }
 
-        return self::getFromPlaylistJson($json->data->trackList[0]);
+        return Song::fromPlaylistJson($json->data->trackList[0]);
     }
 
-    public static function getFromPlaylistJson($json)
+    public static function fromPlaylistJson($json)
     {
         $song = new Song();
         $song->id = $json->songId + 0;
@@ -43,7 +43,7 @@ class Song
         $song->composerNames = html_entity_decode($json->composer, ENT_QUOTES);
         $song->arrangerNames = html_entity_decode($json->arrangement, ENT_QUOTES);
         $song->lyricLink = $json->lyric_url;
-        
+
         usort($json->allAudios, function ($a, $b) {
             return $a->fileSize < $b->fileSize;
         });

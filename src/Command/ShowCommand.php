@@ -9,6 +9,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Style\OutputStyle;
 use GuzzleHttp\Client;
 use Xiami\Console\Model\Song;
+use Xiami\Console\Model\Album;
 use Xiami\Console\Exception\GetPlaylistJsonException;
 use Xiami\Console\Style\AwesomeStyle;
 
@@ -63,9 +64,10 @@ class ShowCommand extends Command
     protected function handleTypeOfSong($id, OutputStyle $io)
     {
         try {
-            $song = Song::getFromPlaylistJsonById($id);
+            $song = Song::getById($id);
             $io->title($song->name);
             $io->section('Information');
+
             $dtlist = [];
             if (!empty($song->albumName)) {
                 $dtlist[] = array('<info>Album</>', $song->albumName);
@@ -83,6 +85,7 @@ class ShowCommand extends Command
                 $dtlist[] = array('<info>Arranger</>', $song->arrangerNames);
             }
             $io->description($dtlist);
+
             $io->section('Download Links');
             if (isset($song->audioLinks['LOSSLESS'])) {
                 $io->text('<info>Lossless Quality</>');
@@ -100,6 +103,7 @@ class ShowCommand extends Command
                 $io->text('<info>Lyric</>');
                 $io->listing([ $song->lyricLink ]);
             }
+
             $io->newLine();
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
@@ -108,6 +112,14 @@ class ShowCommand extends Command
 
     protected function handleTypeOfAlbum($id, OutputStyle $io)
     {
+        try {
+            $album = Album::getById($id);
+
+            var_dump($album);
+            die();
+        } catch (GetPlaylistJsonException $e) {
+            $io->error($e->getMessage());
+        }
     }
 
     protected function handleTypeOfCollection($id, OutputStyle $io)
