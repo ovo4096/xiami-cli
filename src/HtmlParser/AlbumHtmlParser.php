@@ -2,6 +2,7 @@
 namespace Xiami\Console\HtmlParser;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Xiami\Console\Model\Song;
 
 class AlbumHtmlParser extends HtmlParser
 {
@@ -43,7 +44,29 @@ class AlbumHtmlParser extends HtmlParser
         return $tags;
     }
 
-    public function getSongs()
+    public function getTrackList()
     {
+        $trackList = [];
+        $crawler = new Crawler($this->html);
+        
+        $crawlerTrackListDOMs = $crawler->filter('#track_list tr[data-needpay]');
+        foreach ($crawlerTrackListDOMs as $dom) {
+            $crawlerTrackDOM = new Crawler($dom);
+            $matches = [];
+            preg_match(
+                '/\s(?<status>checked|disabled).*?value="(?<id>\d*)"[\s\S]*?"">\s*(?<title>.*?)\s*<\/a>\s*(?<artist>.*?)\s*?</',
+                $crawlerTrackDOM->html(),
+                $matches
+            );
+
+            $song = new Song();
+            $song->hasCopyright = $matches['status'] === 'checked';
+            $song->id = $matches['id'] + 0;
+            $song->tags['Title'] = html_entity_decode($matches['title'], ENT_QUOTES);
+            $song->tags['Artist'] = html_entity_decode($matches['artist'], ENT_QUOTES);
+            $trackList[] = $song;
+        }
+
+        return $trackList;
     }
 }

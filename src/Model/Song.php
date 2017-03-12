@@ -13,6 +13,8 @@ class Song
     public $lyricsUrl;
     public $audioUrls = [];
 
+    public $hasCopyright = false;
+
     public static function get($id)
     {
         $client = new Client();
@@ -33,13 +35,14 @@ class Song
         $song->id = $json->songId + 0;
         $song->albumId = $json->albumId + 0;
         $song->lyricsUrl = $json->lyric_url;
+        $song->hasCopyright = true;
 
-        $song->tags['Title'] = html_entity_decode($json->songName, ENT_QUOTES);
-        $song->tags['Album'] = html_entity_decode($json->album_name, ENT_QUOTES);
-        $song->tags['Artist'] = html_entity_decode($json->artist, ENT_QUOTES);
-        $song->tags['Lyricist'] = html_entity_decode($json->songwriters, ENT_QUOTES);
-        $song->tags['Composer'] = html_entity_decode($json->composer, ENT_QUOTES);
-        $song->tags['Arranger'] = html_entity_decode($json->arrangement, ENT_QUOTES);
+        $song->tags['Title'] = trim(html_entity_decode($json->songName, ENT_QUOTES));
+        $song->tags['Album'] = trim(html_entity_decode($json->album_name, ENT_QUOTES));
+        $song->tags['Artist'] = trim(html_entity_decode($json->artist, ENT_QUOTES));
+        $song->tags['Lyricist'] = trim(html_entity_decode($json->songwriters, ENT_QUOTES));
+        $song->tags['Composer'] = trim(html_entity_decode($json->composer, ENT_QUOTES));
+        $song->tags['Arranger'] = trim(html_entity_decode($json->arrangement, ENT_QUOTES));
 
         usort($json->allAudios, function ($a, $b) {
             return $a->fileSize < $b->fileSize;
@@ -49,7 +52,7 @@ class Song
             if (!isset($song->audioUrls[$audioJSON->audioQualityEnum])) {
                 $song->audioUrls[$audioJSON->audioQualityEnum] = [];
             }
-            $song->audioUrls[$audioJSON->audioQualityEnum][] = $audioJSON->filePath;
+            $song->audioUrls[$audioJSON->audioQualityEnum][] = trim($audioJSON->filePath);
         }, $json->allAudios);
 
         return $song;

@@ -9,7 +9,7 @@ class Album
 {
     public $id;
     public $tags = [];
-    public $tackList = [];
+    public $trackList = [];
 
     public static function get($id)
     {
@@ -27,7 +27,7 @@ class Album
         $album->id = $id;
 
         array_map(function ($songJSON) use ($album) {
-            $album->tackList[] = Song::fromPlaylistJson($songJSON);
+            $album->trackList[] = Song::fromPlaylistJson($songJSON);
         }, $json->data->trackList);
 
         $response = $client->get("http://www.xiami.com/album/$id");
@@ -36,6 +36,19 @@ class Album
         $htmlParser = new AlbumHtmlParser($html);
         $album->tags = $htmlParser->getTags();
 
+        if ($json->message === '应版权方要求，已过滤部分歌曲') {
+            $fullTrackList = $htmlParser->getTrackList();
+            foreach ($fullTrackList as &$song) {
+                if ($song->hasCopyright) {
+                    $result = array_filter($album->trackList, function ($newSong) use ($song) {
+                        return $newSong->id === $song->id;
+                    });
+                    $song = array_shift($result);
+                }
+            }
+            $album->trackList = $fullTrackList;
+        }
+        
         return $album;
     }
 }
