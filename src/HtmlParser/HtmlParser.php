@@ -1,7 +1,7 @@
 <?php
-namespace Xiami\Console\Parser;
+namespace Xiami\Console\HtmlParser;
 
-abstract class Parser
+abstract class HtmlParser
 {
     protected $html;
 

@@ -65,45 +65,35 @@ class ShowCommand extends Command
     {
         try {
             $song = Song::get($id);
-            $io->title($song->name);
-            
-            $dtlist = [];
-            if (!empty($song->albumName)) {
-                $dtlist[] = array('<info>Album</>:', $song->albumName);
-            }
-            if (!empty($song->artistNames)) {
-                $dtlist[] = array('<info>Artist</>:', $song->artistNames);
-            }
-            if (!empty($song->lyricistNames)) {
-                $dtlist[] = array('<info>Lyricist</>:', $song->lyricistNames);
-            }
-            if (!empty($song->composerNames)) {
-                $dtlist[] = array('<info>Composer</>:', $song->composerNames);
-            }
-            if (!empty($song->arrangerNames)) {
-                $dtlist[] = array('<info>Arranger</>:', $song->arrangerNames);
+            $io->section('ID3 Tags');
+
+            $dtList = [];
+            foreach ($song->tags as $key => $value) {
+                if (!empty($value)) {
+                    $dtlist[] = array("<info>$key</>:", $value);
+                }
             }
             $io->description($dtlist);
 
-            $io->section('Download Links');
-            if (isset($song->audioLinks['LOSSLESS'])) {
+            $io->section('Downloads');
+
+            if (isset($song->audioUrls['LOSSLESS'])) {
                 $io->text('<info>Lossless Quality</>');
-                $io->listing($song->audioLinks['LOSSLESS']);
+                $io->listing($song->audioUrls['LOSSLESS']);
             }
-            if (isset($song->audioLinks['HIGH'])) {
+            if (isset($song->audioUrls['HIGH'])) {
                 $io->text('<info>High Quality</>');
-                $io->listing($song->audioLinks['HIGH']);
+                $io->listing($song->audioUrls['HIGH']);
             }
-            if (isset($song->audioLinks['LOW'])) {
+            if (isset($song->audioUrls['LOW'])) {
                 $io->text('<info>Low Quality</>');
-                $io->listing($song->audioLinks['LOW']);
-            }
-            if (!empty($song->lyricLink)) {
-                $io->text('<info>Lyric</>');
-                $io->listing([ $song->lyricLink ]);
+                $io->listing($song->audioUrls['LOW']);
             }
 
-            $io->newLine();
+            if (!empty($song->lyricsUrl)) {
+                $io->text('<info>Lyrics</>');
+                $io->listing([ $song->lyricsUrl ]);
+            }
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
         }

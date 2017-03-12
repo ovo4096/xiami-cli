@@ -1,5 +1,5 @@
 <?php
-namespace Xiami\Console\Parser;
+namespace Xiami\Console\HtmlParser;
 
 use Xiami\Console\Model\Song;
 use Xiami\Console\Model\Artist;

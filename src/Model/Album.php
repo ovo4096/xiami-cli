@@ -3,10 +3,13 @@ namespace Xiami\Console\Model;
 
 use GuzzleHttp\Client;
 use Xiami\Console\Exception\GetPlaylistJsonException;
+use Xiami\Console\HtmlParser\AlbumHtmlParser;
 
 class Album
 {
-    public $songs = [];
+    public $id;
+    public $tags = [];
+    public $tackList = [];
 
     public static function get($id)
     {
@@ -21,16 +24,16 @@ class Album
 
         $album = new Album();
 
-        array_map(function ($json) use ($album) {
-            $album->songs[] = Song::fromPlaylistJson($json);
+        array_map(function ($songJSON) use ($album) {
+            $album->tackList[] = Song::fromPlaylistJson($songJSON);
         }, $json->data->trackList);
 
         $response = $client->get("http://www.xiami.com/album/$id");
+        $html = (string) $response->getBody();
+
+        $htmlParser = new AlbumHtmlParser($html);
+        $album->tags = $htmlParser->getTags();
 
         return $album;
-    }
-
-    public static function getInfo()
-    {
     }
 }
