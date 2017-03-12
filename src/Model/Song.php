@@ -17,7 +17,7 @@ class Song
     public $lyricLink;
     public $audioLinks = [];
 
-    public static function getById($id)
+    public static function get($id)
     {
         $client = new Client();
         $response = $client->get("http://www.xiami.com/song/playlist/id/$id/object_name/default/object_id/0/cat/json");
@@ -28,7 +28,7 @@ class Song
             throw new GetPlaylistJsonException($json->message);
         }
 
-        return Song::fromPlaylistJson($json->data->trackList[0]);
+        return self::fromPlaylistJson($json->data->trackList[0]);
     }
 
     public static function fromPlaylistJson($json)

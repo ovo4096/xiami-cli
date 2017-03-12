@@ -8,7 +8,7 @@ class Album
 {
     public $songs = [];
 
-    public static function getById($id)
+    public static function get($id)
     {
         $client = new Client();
         $response = $client->get("http://www.xiami.com/song/playlist/id/$id/type/1/object_name/default/object_id/0/cat/json");
@@ -25,6 +25,12 @@ class Album
             $album->songs[] = Song::fromPlaylistJson($json);
         }, $json->data->trackList);
 
+        $response = $client->get("http://www.xiami.com/album/$id");
+
         return $album;
+    }
+
+    public static function getInfo()
+    {
     }
 }

@@ -64,25 +64,24 @@ class ShowCommand extends Command
     protected function handleTypeOfSong($id, OutputStyle $io)
     {
         try {
-            $song = Song::getById($id);
+            $song = Song::get($id);
             $io->title($song->name);
-            $io->section('Information');
-
+            
             $dtlist = [];
             if (!empty($song->albumName)) {
-                $dtlist[] = array('<info>Album</>', $song->albumName);
+                $dtlist[] = array('<info>Album</>:', $song->albumName);
             }
             if (!empty($song->artistNames)) {
-                $dtlist[] = array('<info>Artist</>', $song->artistNames);
+                $dtlist[] = array('<info>Artist</>:', $song->artistNames);
             }
             if (!empty($song->lyricistNames)) {
-                $dtlist[] = array('<info>Lyricist</>', $song->lyricistNames);
+                $dtlist[] = array('<info>Lyricist</>:', $song->lyricistNames);
             }
             if (!empty($song->composerNames)) {
-                $dtlist[] = array('<info>Composer</>', $song->composerNames);
+                $dtlist[] = array('<info>Composer</>:', $song->composerNames);
             }
             if (!empty($song->arrangerNames)) {
-                $dtlist[] = array('<info>Arranger</>', $song->arrangerNames);
+                $dtlist[] = array('<info>Arranger</>:', $song->arrangerNames);
             }
             $io->description($dtlist);
 
@@ -113,8 +112,7 @@ class ShowCommand extends Command
     protected function handleTypeOfAlbum($id, OutputStyle $io)
     {
         try {
-            $album = Album::getById($id);
-
+            $album = Album::get($id);
             var_dump($album);
             die();
         } catch (GetPlaylistJsonException $e) {

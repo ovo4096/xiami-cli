@@ -4,7 +4,7 @@ namespace Xiami\Console\Parser;
 use Xiami\Console\Model\Song;
 use Xiami\Console\Model\Artist;
 
-class FavoriteSongPageParser extends Parser
+class FavoriteSongParser extends Parser
 {
     public function getSongs()
     {
