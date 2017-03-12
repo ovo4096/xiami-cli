@@ -32,6 +32,14 @@ class AlbumHtmlParser extends HtmlParser
                     break;
             }
         }
+
+        $matches = [];
+        preg_match(
+            '/.*?(?:(?=<))|.*/',
+            $crawler->filter('h1')->html(),
+            $matches
+        );
+        $tags['Title'] = html_entity_decode($matches[0], ENT_QUOTES);
         return $tags;
     }
 

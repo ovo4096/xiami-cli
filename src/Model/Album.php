@@ -23,6 +23,8 @@ class Album
         }
 
         $album = new Album();
+        
+        $album->id = $id;
 
         array_map(function ($songJSON) use ($album) {
             $album->tackList[] = Song::fromPlaylistJson($songJSON);
