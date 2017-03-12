@@ -11,6 +11,8 @@ class Album
     public $tags = [];
     public $trackList = [];
 
+    public $summary;
+
     public static function get($id)
     {
         $client = new Client();
@@ -35,6 +37,10 @@ class Album
         $html = (string) $response->getBody();
         $htmlParser = new AlbumHtmlParser($html);
         $album->tags = $htmlParser->getTags();
+
+        $album->summary = $htmlParser->getSummary();
+        var_dump($album->summary);
+        die();
 
         if ($json->message === '应版权方要求，已过滤部分歌曲' || $json->message === '抱歉，应版权方要求，没有歌曲可以播放~') {
             $fullTrackList = $htmlParser->getTrackList();

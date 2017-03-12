@@ -69,4 +69,12 @@ class AlbumHtmlParser extends HtmlParser
 
         return $trackList;
     }
+
+    public function getSummary()
+    {
+        $crawler = new Crawler($this->html);
+        $crawlerSummaryDOM = $crawler->filter('[property="v:summary"]');
+
+        return str_replace('<br>', "\n", $crawlerSummaryDOM->html());
+    }
 }

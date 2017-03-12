@@ -65,7 +65,7 @@ class ShowCommand extends Command
     {
         try {
             $song = Song::get($id);
-            $io->section('ID3 Tags');
+            $io->title($song->tags['Title'] . (isset($song->tags['Artist']) ? ' - ' . $song->tags['Artist'] : ''));
 
             $dtList = [];
             foreach ($song->tags as $key => $value) {
@@ -103,8 +103,16 @@ class ShowCommand extends Command
     {
         try {
             $album = Album::get($id);
-            var_dump($album);
-            die();
+            $io->section('Tags');
+
+            $dtList = [];
+            foreach ($album->tags as $key => $value) {
+                if (!empty($value)) {
+                    $dtlist[] = array("<info>$key</>:", $value);
+                }
+            }
+            $io->description($dtlist);
+
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
         }
