@@ -18,25 +18,25 @@ class Album
 
         $json = json_decode((string) $response->getBody());
 
-        if ((!empty($json->message) && count($json->data->trackList) === 0) || !$json->status) {
+        if (!$json->status) {
             throw new GetPlaylistJsonException($json->message);
         }
 
         $album = new Album();
-        
         $album->id = $id;
-
-        array_map(function ($songJSON) use ($album) {
-            $album->trackList[] = Song::fromPlaylistJson($songJSON);
-        }, $json->data->trackList);
+        
+        if (!empty($json->message) && count($json->data->trackList) !== 0) {
+            foreach ($json->data->trackList as $songJSON) {
+                $album->trackList[] = Song::fromPlaylistJson($songJSON);
+            }
+        }
 
         $response = $client->get("http://www.xiami.com/album/$id");
         $html = (string) $response->getBody();
-
         $htmlParser = new AlbumHtmlParser($html);
         $album->tags = $htmlParser->getTags();
 
-        if ($json->message === '应版权方要求，已过滤部分歌曲') {
+        if ($json->message === '应版权方要求，已过滤部分歌曲' || $json->message === '抱歉，应版权方要求，没有歌曲可以播放~') {
             $fullTrackList = $htmlParser->getTrackList();
             foreach ($fullTrackList as &$song) {
                 if ($song->hasCopyright) {
@@ -48,7 +48,7 @@ class Album
             }
             $album->trackList = $fullTrackList;
         }
-        
+
         return $album;
     }
 }
