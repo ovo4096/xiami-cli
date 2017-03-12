@@ -27,10 +27,14 @@ class Album
         $album = new Album();
         $album->id = $id;
         
-        if (!empty($json->message) && count($json->data->trackList) !== 0) {
+        if (count($json->data->trackList) !== 0) {
             foreach ($json->data->trackList as $songJSON) {
                 $album->trackList[] = Song::fromPlaylistJson($songJSON);
             }
+        }
+
+        if ($json->message === '抱歉，没有歌曲可以播放~') {
+            throw new GetPlaylistJsonException($json->message);
         }
 
         $response = $client->get("http://www.xiami.com/album/$id");
@@ -39,8 +43,6 @@ class Album
         $album->tags = $htmlParser->getTags();
 
         $album->summary = $htmlParser->getSummary();
-        var_dump($album->summary);
-        die();
 
         if ($json->message === '应版权方要求，已过滤部分歌曲' || $json->message === '抱歉，应版权方要求，没有歌曲可以播放~') {
             $fullTrackList = $htmlParser->getTrackList();

@@ -72,9 +72,12 @@ class AlbumHtmlParser extends HtmlParser
 
     public function getSummary()
     {
-        $crawler = new Crawler($this->html);
-        $crawlerSummaryDOM = $crawler->filter('[property="v:summary"]');
-
-        return str_replace('<br>', "\n", $crawlerSummaryDOM->html());
+        try {
+            $crawler = new Crawler($this->html);
+            $crawlerSummaryDOM = $crawler->filter('[property="v:summary"]');
+            return trim($crawlerSummaryDOM->text());
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 }

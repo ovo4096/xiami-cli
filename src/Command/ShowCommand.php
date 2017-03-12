@@ -65,10 +65,13 @@ class ShowCommand extends Command
     {
         try {
             $song = Song::get($id);
-            $io->title($song->tags['Title'] . (isset($song->tags['Artist']) ? ' - ' . $song->tags['Artist'] : ''));
+            $io->title($song->tags['Title']);
 
             $dtList = [];
             foreach ($song->tags as $key => $value) {
+                if ($key === 'Title') {
+                    continue;
+                }
                 if (!empty($value)) {
                     $dtlist[] = array("<info>$key</>:", $value);
                 }
@@ -103,16 +106,41 @@ class ShowCommand extends Command
     {
         try {
             $album = Album::get($id);
-            $io->section('Tags');
+            $io->title($album->tags['Title']);
 
             $dtList = [];
             foreach ($album->tags as $key => $value) {
+                if ($key === 'Title') {
+                    continue;
+                }
                 if (!empty($value)) {
                     $dtlist[] = array("<info>$key</>:", $value);
                 }
             }
             $io->description($dtlist);
 
+            if (!empty($album->summary)) {
+                $io->section('Summary');
+                $io->block($album->summary);
+            }
+
+            if (count($album->trackList) !== 0) {
+                $io->section('Track List');
+                $body = [];
+                foreach ($album->trackList as $song) {
+                    $body[] = [
+                        $song->id,
+                        $song->tags['Title'],
+                        $song->tags['Artist'],
+                        $song->hasCopyright ? 'Yes' : 'No'
+                    ];
+                }
+
+                $io->table(
+                    ['Id', 'Title', 'Artist', 'DL'],
+                    $body
+                );
+            }
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
         }
