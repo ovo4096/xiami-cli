@@ -6,28 +6,27 @@ use Xiami\Console\Model\Song;
 
 class AlbumHtmlParser extends HtmlParser
 {
-    public function getTags()
+    public function setInfoTo($album)
     {
         $crawler = new Crawler($this->html);
         $crawlerTagDOMs = $crawler->filter('#album_info table tr');
-        $tags = [];
         foreach ($crawlerTagDOMs as $tagDOM) {
             $crawlerTagDOM = new Crawler($tagDOM);
             switch ($crawlerTagDOM->children()->eq(0)->text()) {
                 case '艺人：':
-                    $tags['Artist'] = trim($crawlerTagDOM->children()->eq(1)->text());
+                    $album->artist = trim($crawlerTagDOM->children()->eq(1)->text());
                     break;
                 case '语种：':
-                    $tags['Language'] = trim($crawlerTagDOM->children()->eq(1)->text());
+                    $album->language = trim($crawlerTagDOM->children()->eq(1)->text());
                     break;
                 case '唱片公司：':
-                    $tags['Release Date'] = trim($crawlerTagDOM->children()->eq(1)->text());
+                    $album->publisher = trim($crawlerTagDOM->children()->eq(1)->text());
                     break;
                 case '发行时间：':
-                    $tags['Publisher'] = trim($crawlerTagDOM->children()->eq(1)->text());
+                    $album->releaseDate = trim($crawlerTagDOM->children()->eq(1)->text());
                     break;
                 case '专辑类别：':
-                    $tags['Genre'] = trim($crawlerTagDOM->children()->eq(1)->text());
+                    $album->genre = trim($crawlerTagDOM->children()->eq(1)->text());
                     break;
                 default:
                     break;
@@ -40,8 +39,7 @@ class AlbumHtmlParser extends HtmlParser
             $crawler->filter('h1')->html(),
             $matches
         );
-        $tags['Title'] = html_entity_decode($matches[0], ENT_QUOTES);
-        return $tags;
+        $album->title = html_entity_decode($matches[0], ENT_QUOTES);
     }
 
     public function getTrackList()
@@ -62,8 +60,8 @@ class AlbumHtmlParser extends HtmlParser
             $song = new Song();
             $song->hasCopyright = $matches['status'] === 'checked';
             $song->id = $matches['id'] + 0;
-            $song->tags['Title'] = html_entity_decode($matches['title'], ENT_QUOTES);
-            $song->tags['Artist'] = html_entity_decode($matches['artist'], ENT_QUOTES);
+            $song->title = html_entity_decode($matches['title'], ENT_QUOTES);
+            $song->artist = html_entity_decode($matches['artist'], ENT_QUOTES);
             $trackList[] = $song;
         }
 

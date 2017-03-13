@@ -8,10 +8,15 @@ use Xiami\Console\HtmlParser\AlbumHtmlParser;
 class Album
 {
     public $id;
-    public $tags = [];
-    public $trackList = [];
-
+    public $title;
+    public $artist;
+    public $language;
+    public $publisher;
+    public $releaseDate;
+    public $genre;
     public $summary;
+
+    public $trackList = [];
 
     public static function get($id)
     {
@@ -40,7 +45,7 @@ class Album
         $response = $client->get("http://www.xiami.com/album/$id");
         $html = (string) $response->getBody();
         $htmlParser = new AlbumHtmlParser($html);
-        $album->tags = $htmlParser->getTags();
+        $htmlParser->setInfoTo($album);
 
         $album->summary = $htmlParser->getSummary();
 

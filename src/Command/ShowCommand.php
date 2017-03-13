@@ -65,34 +65,53 @@ class ShowCommand extends Command
     {
         try {
             $song = Song::get($id);
-            $io->title($song->tags['Title']);
+            $io->title($song->title);
 
-            $dtList = [];
-            foreach ($song->tags as $key => $value) {
-                if ($key === 'Title') {
-                    continue;
-                }
-                if (!empty($value)) {
-                    $dtlist[] = array("<info>$key</>:", $value);
-                }
+            $io->description([
+                ["<info>Id</>:", $song->id]
+            ]);
+
+            $list = [];
+            if (isset($song->artist)) {
+                $list[] = ["<info>Artist</>:", $song->artist];
             }
-            $io->description($dtlist);
+            if (isset($song->lyricist)) {
+                $list[] = ["<info>Lyricist</>:", $song->lyricist];
+            }
+            if (isset($song->composer)) {
+                $list[] = ["<info>Composer</>:", $song->composer];
+            }
+            if (isset($song->arranger)) {
+                $list[] = ["<info>Arranger</>:", $song->arranger];
+            }
+            if (count($list) !== 0) {
+                $io->description($list);
+            }
+
+            $list = [];
+            if (isset($song->albumId)) {
+                $list[] = ["<info>Album Id</>:", $song->albumId];
+            }
+            if (isset($song->albumTitle)) {
+                $list[] = ["<info>Album Title</>:", $song->albumTitle];
+            }
+            if (count($list) !== 0) {
+                $io->description($list);
+            }
 
             $io->section('Downloads');
-
-            if (isset($song->audioUrls['LOSSLESS'])) {
+            if (isset($song->audioUrls[Song::LOSSLESS_QUALITY])) {
                 $io->text('<info>Lossless Quality</>');
                 $io->listing($song->audioUrls['LOSSLESS']);
             }
-            if (isset($song->audioUrls['HIGH'])) {
+            if (isset($song->audioUrls[Song::HIGH_QUALITY])) {
                 $io->text('<info>High Quality</>');
                 $io->listing($song->audioUrls['HIGH']);
             }
-            if (isset($song->audioUrls['LOW'])) {
+            if (isset($song->audioUrls[Song::LOW_QUALITY])) {
                 $io->text('<info>Low Quality</>');
                 $io->listing($song->audioUrls['LOW']);
             }
-
             if (!empty($song->lyricsUrl)) {
                 $io->text('<info>Lyrics</>');
                 $io->listing([ $song->lyricsUrl ]);
@@ -106,20 +125,31 @@ class ShowCommand extends Command
     {
         try {
             $album = Album::get($id);
-            $io->title($album->tags['Title']);
+            $io->title($album->title);
 
-            $dtList = [];
-            foreach ($album->tags as $key => $value) {
-                if ($key === 'Title') {
-                    continue;
-                }
-                if (!empty($value)) {
-                    $dtlist[] = array("<info>$key</>:", $value);
-                }
+            $io->description([
+                ["<info>Id</>:", $album->id]
+            ]);
+
+            $list = [];
+            if (isset($album->artist)) {
+                $list[] = ["<info>Artist</>:", $album->artist];
             }
-            $io->description($dtlist);
+            if (isset($album->language)) {
+                $list[] = ["<info>Language</>:", $album->language];
+            }
+            if (isset($album->publisher)) {
+                $list[] = ["<info>Publisher</>:", $album->publisher];
+            }
+            if (isset($album->releaseDate)) {
+                $list[] = ["<info>Release Date</>:", $album->releaseDate];
+            }
+            if (isset($album->genre)) {
+                $list[] = ["<info>Genre</>:", $album->genre];
+            }
+            $io->description($list);
 
-            if (!empty($album->summary)) {
+            if (isset($album->summary)) {
                 $io->section('Summary');
                 $io->writeln($album->summary);
             }
@@ -130,12 +160,11 @@ class ShowCommand extends Command
                 foreach ($album->trackList as $song) {
                     $body[] = [
                         $song->id,
-                        $song->tags['Title'],
-                        $song->tags['Artist'],
+                        $song->title,
+                        $song->artist,
                         $song->hasCopyright ? 'Yes' : 'No'
                     ];
                 }
-
                 $io->table(
                     ['Id', 'Title', 'Artist', 'DL'],
                     $body

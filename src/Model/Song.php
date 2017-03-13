@@ -6,9 +6,19 @@ use GuzzleHttp\Client;
 
 class Song
 {
+    public const LOSSLESS_QUALITY = 'LOSSLESS';
+    public const HIGH_QUALITY = 'HIGH';
+    public const LOW_QUALITY = 'LOW';
+
     public $id;
+    public $title;
+    public $artist;
+    public $lyricist;
+    public $composer;
+    public $arranger;
+    
     public $albumId;
-    public $tags = [];
+    public $albumTitle;
 
     public $lyricsUrl;
     public $audioUrls = [];
@@ -32,28 +42,30 @@ class Song
     public static function fromPlaylistJson($json)
     {
         $song = new Song();
+
         $song->id = $json->songId + 0;
+        $song->title = trim(html_entity_decode($json->songName, ENT_QUOTES));
+        $song->artist = trim(html_entity_decode($json->artist, ENT_QUOTES));
+        $song->lyricist = trim(html_entity_decode($json->songwriters, ENT_QUOTES));
+        $song->composer = trim(html_entity_decode($json->composer, ENT_QUOTES));
+        $song->arranger = trim(html_entity_decode($json->arrangement, ENT_QUOTES));
+        
         $song->albumId = $json->albumId + 0;
+        $song->albumTitle = trim(html_entity_decode($json->album_name, ENT_QUOTES));
+
         $song->lyricsUrl = $json->lyric_url;
         $song->hasCopyright = true;
-
-        $song->tags['Title'] = trim(html_entity_decode($json->songName, ENT_QUOTES));
-        $song->tags['Album'] = trim(html_entity_decode($json->album_name, ENT_QUOTES));
-        $song->tags['Artist'] = trim(html_entity_decode($json->artist, ENT_QUOTES));
-        $song->tags['Lyricist'] = trim(html_entity_decode($json->songwriters, ENT_QUOTES));
-        $song->tags['Composer'] = trim(html_entity_decode($json->composer, ENT_QUOTES));
-        $song->tags['Arranger'] = trim(html_entity_decode($json->arrangement, ENT_QUOTES));
 
         usort($json->allAudios, function ($a, $b) {
             return $a->fileSize < $b->fileSize;
         });
 
-        array_map(function ($audioJSON) use ($song) {
+        foreach ($json->allAudios as $audioJSON) {
             if (!isset($song->audioUrls[$audioJSON->audioQualityEnum])) {
                 $song->audioUrls[$audioJSON->audioQualityEnum] = [];
             }
             $song->audioUrls[$audioJSON->audioQualityEnum][] = trim($audioJSON->filePath);
-        }, $json->allAudios);
+        }
 
         return $song;
     }
