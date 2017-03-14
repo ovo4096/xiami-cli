@@ -8,6 +8,7 @@ use Xiami\Console\HtmlParser\AlbumHtmlParser;
 class Album
 {
     public $id;
+
     public $title;
     public $artist;
     public $language;
@@ -30,36 +31,52 @@ class Album
         }
 
         $album = new Album();
-        $album->id = $id;
-        
-        if (count($json->data->trackList) !== 0) {
-            foreach ($json->data->trackList as $songJSON) {
-                $album->trackList[] = Song::fromPlaylistJson($songJSON);
-            }
-        }
 
-        if ($json->message === '抱歉，没有歌曲可以播放~') {
-            throw new GetPlaylistJsonException($json->message);
-        }
+        switch ($json->message) {
+            case '应版权方要求，已过滤部分歌曲':
+            case '抱歉，应版权方要求，没有歌曲可以播放~':
+            case '':
+                $album->id = $id + 0;
 
-        $response = $client->get("http://www.xiami.com/album/$id");
-        $html = (string) $response->getBody();
-        $htmlParser = new AlbumHtmlParser($html);
-        $htmlParser->setInfoTo($album);
+                $response = $client->get("http://www.xiami.com/album/$id");
+                $html = (string) $response->getBody();
+                $htmlParser = new AlbumHtmlParser($html);
 
-        $album->summary = $htmlParser->getSummary();
+                $album->title = $htmlParser->getTitle();
+                $album->artist = $htmlParser->getArtist();
+                $album->language = $htmlParser->getLanguage();
+                $album->publisher = $htmlParser->getPublisher();
+                $album->releaseDate = $htmlParser->getReleaseDate();
+                $album->genre = $htmlParser->getGenre();
+                $album->summary = $htmlParser->getSummary();
+                $fullTrackList = $htmlParser->getTrackList();
 
-        if ($json->message === '应版权方要求，已过滤部分歌曲' || $json->message === '抱歉，应版权方要求，没有歌曲可以播放~') {
-            $fullTrackList = $htmlParser->getTrackList();
-            foreach ($fullTrackList as &$song) {
-                if ($song->hasCopyright) {
-                    $result = array_filter($album->trackList, function ($newSong) use ($song) {
-                        return $newSong->id === $song->id;
-                    });
-                    $song = array_shift($result);
+                foreach ($json->data->trackList as $songJSON) {
+                    $album->trackList[] = Song::fromPlaylistJson($songJSON);
                 }
-            }
-            $album->trackList = $fullTrackList;
+
+                foreach ($fullTrackList as &$song) {
+                    if ($song->hasCopyright) {
+                        $result = array_filter($album->trackList, function ($newSong) use ($song) {
+                            return $newSong->id === $song->id;
+                        });
+                        $replaceSong = array_shift($result);
+                        $replaceSong->merge($song);
+
+                        if (empty($replaceSong->artist) && !empty($album->artist)) {
+                            $replaceSong->artist = $album->artist;
+                        }
+
+                        $song = $replaceSong;
+                    }
+                }
+
+                $album->trackList = $fullTrackList;
+                break;
+
+            default:
+                throw new GetPlaylistJsonException($json->message);
+                break;
         }
 
         return $album;

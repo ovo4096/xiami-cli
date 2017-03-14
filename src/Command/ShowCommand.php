@@ -152,7 +152,7 @@ class ShowCommand extends Command
 
             if (isset($album->summary)) {
                 $io->section('Summary');
-                $io->writeln($album->summary);
+                $io->block($album->summary);
             }
 
             $io->section('Track List');

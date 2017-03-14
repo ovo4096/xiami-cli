@@ -6,40 +6,56 @@ use Xiami\Console\Model\Song;
 
 class AlbumHtmlParser extends HtmlParser
 {
-    public function setInfoTo($album)
+    public function getTitle()
     {
-        $crawler = new Crawler($this->html);
-        $crawlerTagDOMs = $crawler->filter('#album_info table tr');
-        foreach ($crawlerTagDOMs as $tagDOM) {
-            $crawlerTagDOM = new Crawler($tagDOM);
-            switch ($crawlerTagDOM->children()->eq(0)->text()) {
-                case '艺人：':
-                    $album->artist = trim($crawlerTagDOM->children()->eq(1)->text());
-                    break;
-                case '语种：':
-                    $album->language = trim($crawlerTagDOM->children()->eq(1)->text());
-                    break;
-                case '唱片公司：':
-                    $album->publisher = trim($crawlerTagDOM->children()->eq(1)->text());
-                    break;
-                case '发行时间：':
-                    $album->releaseDate = trim($crawlerTagDOM->children()->eq(1)->text());
-                    break;
-                case '专辑类别：':
-                    $album->genre = trim($crawlerTagDOM->children()->eq(1)->text());
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        $matches = [];
         preg_match(
-            '/.*?(?:(?=<))|.*/',
-            $crawler->filter('h1')->html(),
+            '/h1[\s\S]*?>(?<title>[\s\S]*?)</',
+            $this->html,
             $matches
         );
-        $album->title = html_entity_decode($matches[0], ENT_QUOTES);
+        if (!isset($matches['title'])) {
+            return null;
+        }
+        return $matches['title'];
+    }
+
+    public function getArtist()
+    {
+        return $this->getTag('艺人：');
+    }
+
+    public function getLanguage()
+    {
+        return $this->getTag('语种：');
+    }
+
+    public function getPublisher()
+    {
+        return $this->getTag('唱片公司：');
+    }
+
+    public function getReleaseDate()
+    {
+        return $this->getTag('发行时间：');
+    }
+
+    public function getGenre()
+    {
+        return $this->getTag('专辑类别：');
+    }
+
+    public function getSummary()
+    {
+        preg_match(
+            '/(?<=v:summary">)(?<summary>[\s\S]*?)(?=<\/span)/',
+            $this->html,
+            $matches
+        );
+        if (!isset($matches['summary'])) {
+            return null;
+        }
+
+        return self::formatHtmlTextareaToConsoleTextblock($matches['summary']);
     }
 
     public function getTrackList()
@@ -47,13 +63,13 @@ class AlbumHtmlParser extends HtmlParser
         $trackList = [];
         $crawler = new Crawler($this->html);
         
-        $crawlerTrackListDOMs = $crawler->filter('#track_list tr[data-needpay]');
-        foreach ($crawlerTrackListDOMs as $dom) {
-            $crawlerTrackDOM = new Crawler($dom);
+        $doms = $crawler->filter('#track_list tr[data-needpay]');
+        foreach ($doms as $dom) {
+            $dom = new Crawler($dom);
             $matches = [];
             preg_match(
                 '/\s(?<status>checked|disabled).*?value="(?<id>\d*)"[\s\S]*?"">\s*(?<title>.*?)\s*<\/a>\s*(?<artist>.*?)\s*?</',
-                $crawlerTrackDOM->html(),
+                $dom->html(),
                 $matches
             );
 
@@ -68,14 +84,16 @@ class AlbumHtmlParser extends HtmlParser
         return $trackList;
     }
 
-    public function getSummary()
+    protected function getTag($name)
     {
-        try {
-            $crawler = new Crawler($this->html);
-            $crawlerSummaryDOM = $crawler->filter('[property="v:summary"]');
-            return trim(preg_replace('/\<br(\s*)?\/?\>/i', "\n", $crawlerSummaryDOM->html()));
-        } catch (\Exception $e) {
-            return '';
+        $crawler = new Crawler($this->html);
+        $doms = $crawler->filter('#album_info table tr');
+        foreach ($doms as $dom) {
+            $dom = new Crawler($dom);
+            if ($dom->children()->eq(0)->text() === $name) {
+                return trim($dom->children()->eq(1)->text());
+            }
         }
+        return null;
     }
 }
