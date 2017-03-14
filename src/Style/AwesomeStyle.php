@@ -14,13 +14,4 @@ class AwesomeStyle extends SymfonyStyle
         $table->render();
         $this->newLine();
     }
-
-    public function table(array $headers, array $rows)
-    {
-        $table = new Table($this);
-        $table->setHeaders($headers);
-        $table->setRows($rows);
-        $table->render();
-        $this->newLine();
-    }
 }

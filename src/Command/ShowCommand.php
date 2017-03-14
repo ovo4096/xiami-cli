@@ -69,21 +69,21 @@ class ShowCommand extends Command
             $io->title($song->title);
 
             $io->description([
-                ["<info>Id</>:", $song->id]
+                ['<info>Id</>:', $song->id]
             ]);
 
             $list = [];
             if (isset($song->artist)) {
-                $list[] = ["<info>Artist</>:", $song->artist];
+                $list[] = ['<info>Artist</>:', $song->artist];
             }
             if (isset($song->lyricist)) {
-                $list[] = ["<info>Lyricist</>:", $song->lyricist];
+                $list[] = ['<info>Lyricist</>:', $song->lyricist];
             }
             if (isset($song->composer)) {
-                $list[] = ["<info>Composer</>:", $song->composer];
+                $list[] = ['<info>Composer</>:', $song->composer];
             }
             if (isset($song->arranger)) {
-                $list[] = ["<info>Arranger</>:", $song->arranger];
+                $list[] = ['<info>Arranger</>:', $song->arranger];
             }
             if (count($list) !== 0) {
                 $io->description($list);
@@ -91,10 +91,10 @@ class ShowCommand extends Command
 
             $list = [];
             if (isset($song->albumId)) {
-                $list[] = ["<info>Album Id</>:", $song->albumId];
+                $list[] = ['<info>Album Id</>:', $song->albumId];
             }
             if (isset($song->albumTitle)) {
-                $list[] = ["<info>Album Title</>:", $song->albumTitle];
+                $list[] = ['<info>Album Title</>:', $song->albumTitle];
             }
             if (count($list) !== 0) {
                 $io->description($list);
@@ -129,24 +129,24 @@ class ShowCommand extends Command
             $io->title($album->title);
 
             $io->description([
-                ["<info>Id</>:", $album->id]
+                ['<info>Id</>:', $album->id]
             ]);
 
             $list = [];
             if (isset($album->artist)) {
-                $list[] = ["<info>Artist</>:", $album->artist];
+                $list[] = ['<info>Artist</>:', $album->artist];
             }
             if (isset($album->language)) {
-                $list[] = ["<info>Language</>:", $album->language];
+                $list[] = ['<info>Language</>:', $album->language];
             }
             if (isset($album->publisher)) {
-                $list[] = ["<info>Publisher</>:", $album->publisher];
+                $list[] = ['<info>Publisher</>:', $album->publisher];
             }
             if (isset($album->releaseDate)) {
-                $list[] = ["<info>Release Date</>:", $album->releaseDate];
+                $list[] = ['<info>Release Date</>:', $album->releaseDate];
             }
             if (isset($album->genre)) {
-                $list[] = ["<info>Genre</>:", $album->genre];
+                $list[] = ['<info>Genre</>:', $album->genre];
             }
             $io->description($list);
 
@@ -155,22 +155,20 @@ class ShowCommand extends Command
                 $io->writeln($album->summary);
             }
 
-            if (count($album->trackList) !== 0) {
-                $io->section('Track List');
-                $body = [];
-                foreach ($album->trackList as $song) {
-                    $body[] = [
-                        $song->id,
-                        $song->title,
-                        $song->artist,
-                        $song->hasCopyright ? 'Yes' : 'No'
-                    ];
-                }
-                $io->table(
-                    ['Id', 'Title', 'Artist', 'DL'],
-                    $body
-                );
+            $io->section('Track List');
+            $body = [];
+            foreach ($album->trackList as $song) {
+                $body[] = [
+                    $song->id,
+                    $song->title,
+                    $song->artist,
+                    $song->hasCopyright ? 'Yes' : 'No'
+                ];
             }
+            $io->table(
+                ['Id', 'Title', 'Artist', 'DL'],
+                $body
+            );
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
         }
@@ -180,8 +178,43 @@ class ShowCommand extends Command
     {
         try {
             $collection = Collection::get($id);
-            var_dump($collection);
-            die;
+            $io->title($collection->title);
+
+            $io->description([
+                ['<info>Id</>:', $collection->id]
+            ]);
+
+            $list = [];
+            if (isset($collection->maker)) {
+                $list[] = ['<info>Maker</>:', $collection->maker];
+            }
+            if (isset($collection->updateDate)) {
+                $list[] = ['<info>Update Date</>:', $collection->updateDate];
+            }
+            if (isset($collection->tags)) {
+                $list[] = ['<info>Tags</>:', implode(', ', $collection->tags)];
+            }
+            $io->description($list);
+
+            if (isset($collection->introduction)) {
+                $io->section('Introduction');
+                $io->block($collection->introduction);
+            }
+
+            $io->section('Track List');
+            $body = [];
+            foreach ($collection->trackList as $song) {
+                $body[] = [
+                    $song->id,
+                    $song->title,
+                    $song->artist,
+                    $song->hasCopyright ? 'Yes' : 'No'
+                ];
+            }
+            $io->table(
+                ['Id', 'Title', 'Artist', 'DL'],
+                $body
+            );
         } catch (GetPlaylistJsonException $e) {
             $io->error($e->getMessage());
         }
