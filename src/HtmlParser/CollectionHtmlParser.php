@@ -9,16 +9,23 @@ class CollectionHtmlParser extends HtmlParser
     public function getTitle()
     {
         preg_match(
-            '/(?<=h2>)[\s\S]*?(?:(?=<))/',
+            '/(?<=h2>)(?<title>[\s\S]*?)(?:(?=<))/',
             $this->html,
             $matches
         );
-        return trim(html_entity_decode($matches[0], ENT_QUOTES));
+        if (!isset($matches['title'])) {
+            return null;
+        }
+        return trim($matches['title']);
     }
 
     public function getMaker()
     {
-        $crawler = new Crawler($this->html);
+        try {
+            $crawler = new Crawler($this->html);
+        } catch (\Exception $e) {
+            return null;
+        }
         return trim($crawler->filter('[name_card]')->text());
     }
 
@@ -49,11 +56,14 @@ class CollectionHtmlParser extends HtmlParser
     public function getUpdateDate()
     {
         preg_match(
-            '/(?<=更新时间：<\/span>)[\s\S]*?(?=<\/l)/',
+            '/(?<=更新时间：<\/span>)(?<updateDate>[\s\S]*?)(?=<\/l)/',
             $this->html,
             $matches
         );
-        return trim($matches[0]);
+        if (!isset($matches['updateDate'])) {
+            return null;
+        }
+        return trim($matches['updateDate']);
     }
 
     public function getIntroduction()
@@ -63,7 +73,7 @@ class CollectionHtmlParser extends HtmlParser
             $this->html,
             $matches
         );
-        if (count($matches) === 0) {
+        if (!isset($matches['intro'])) {
             return null;
         }
         return self::formatHtmlTextareaToConsoleTextblock($matches['intro']);
