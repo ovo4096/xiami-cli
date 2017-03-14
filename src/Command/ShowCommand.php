@@ -10,6 +10,7 @@ use Symfony\Component\Console\Style\OutputStyle;
 use GuzzleHttp\Client;
 use Xiami\Console\Model\Song;
 use Xiami\Console\Model\Album;
+use Xiami\Console\Model\Collection;
 use Xiami\Console\Exception\GetPlaylistJsonException;
 use Xiami\Console\Style\AwesomeStyle;
 
@@ -177,5 +178,12 @@ class ShowCommand extends Command
 
     protected function handleTypeOfCollection($id, OutputStyle $io)
     {
+        try {
+            $collection = Collection::get($id);
+            var_dump($collection);
+            die;
+        } catch (GetPlaylistJsonException $e) {
+            $io->error($e->getMessage());
+        }
     }
 }

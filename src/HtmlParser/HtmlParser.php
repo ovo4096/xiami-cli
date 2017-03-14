@@ -9,4 +9,22 @@ abstract class HtmlParser
     {
         $this->html = $html;
     }
+
+    public static function formatHtmlTextareaToConsoleTextblock($html)
+    {
+        return html_entity_decode(
+            html_entity_decode(
+                preg_replace(
+                    '/\<br(\s*)?\/?\>/i',
+                    "\n",
+                    preg_replace(
+                        '/\<(?!br).*?(\s*)?\/?\>/i',
+                        '',
+                        trim($html)
+                    )
+                ),
+                ENT_QUOTES
+            )
+        );
+    }
 }
