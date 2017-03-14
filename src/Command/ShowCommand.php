@@ -73,16 +73,16 @@ class ShowCommand extends Command
             ]);
 
             $list = [];
-            if (isset($song->artist)) {
+            if (!empty($song->artist)) {
                 $list[] = ['<info>Artist</>:', $song->artist];
             }
-            if (isset($song->lyricist)) {
+            if (!empty($song->lyricist)) {
                 $list[] = ['<info>Lyricist</>:', $song->lyricist];
             }
-            if (isset($song->composer)) {
+            if (!empty($song->composer)) {
                 $list[] = ['<info>Composer</>:', $song->composer];
             }
-            if (isset($song->arranger)) {
+            if (!empty($song->arranger)) {
                 $list[] = ['<info>Arranger</>:', $song->arranger];
             }
             if (count($list) !== 0) {
@@ -90,10 +90,10 @@ class ShowCommand extends Command
             }
 
             $list = [];
-            if (isset($song->albumId)) {
+            if (!empty($song->albumId)) {
                 $list[] = ['<info>Album Id</>:', $song->albumId];
             }
-            if (isset($song->albumTitle)) {
+            if (!empty($song->albumTitle)) {
                 $list[] = ['<info>Album Title</>:', $song->albumTitle];
             }
             if (count($list) !== 0) {
@@ -133,24 +133,24 @@ class ShowCommand extends Command
             ]);
 
             $list = [];
-            if (isset($album->artist)) {
+            if (!empty($album->artist)) {
                 $list[] = ['<info>Artist</>:', $album->artist];
             }
-            if (isset($album->language)) {
+            if (!empty($album->language)) {
                 $list[] = ['<info>Language</>:', $album->language];
             }
-            if (isset($album->publisher)) {
+            if (!empty($album->publisher)) {
                 $list[] = ['<info>Publisher</>:', $album->publisher];
             }
-            if (isset($album->releaseDate)) {
+            if (!empty($album->releaseDate)) {
                 $list[] = ['<info>Release Date</>:', $album->releaseDate];
             }
-            if (isset($album->genre)) {
+            if (!empty($album->genre)) {
                 $list[] = ['<info>Genre</>:', $album->genre];
             }
             $io->description($list);
 
-            if (isset($album->summary)) {
+            if (!empty($album->summary)) {
                 $io->section('Summary');
                 $io->block($album->summary);
             }
@@ -196,7 +196,7 @@ class ShowCommand extends Command
             }
             $io->description($list);
 
-            if (isset($collection->introduction)) {
+            if (!empty($collection->introduction)) {
                 $io->section('Introduction');
                 $io->block($collection->introduction);
             }
