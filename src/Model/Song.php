@@ -69,4 +69,49 @@ class Song
 
         return $song;
     }
+
+    public function merge($song)
+    {
+        if (!isset($this->id) && isset($song->id)) {
+            $this->id = $song->id;
+        }
+
+        if (!isset($this->albumId) && isset($song->albumId)) {
+            $this->albumId = $song->albumId;
+        }
+
+        if (empty($this->title) && !empty($song->title)) {
+            $this->title = $song->title;
+        }
+
+        if (empty($this->artist) && !empty($song->artist)) {
+            $this->artist = $song->artist;
+        }
+
+        if (empty($this->lyricist) && !empty($song->lyricist)) {
+            $this->lyricist = $song->lyricist;
+        }
+
+        if (empty($this->composer) && !empty($song->composer)) {
+            $this->composer = $song->composer;
+        }
+
+        if (empty($this->arranger) && !empty($song->arranger)) {
+            $this->arranger = $song->arranger;
+        }
+
+        if (empty($this->albumTitle) && !empty($song->albumTitle)) {
+            $this->albumTitle = $song->albumTitle;
+        }
+
+        if (empty($this->lyricsUrl) && !empty($song->lyricsUrl)) {
+            $this->lyricsUrl = $song->lyricsUrl;
+        }
+
+        if (count($this->audioUrls) === 0 && count($song->audioUrls) > 0) {
+            $this->audioUrls = $song->audioUrls;
+        }
+
+        $this->hasCopyright = $this->hasCopyright || $song->hasCopyright;
+    }
 }

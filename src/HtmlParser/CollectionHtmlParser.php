@@ -91,14 +91,12 @@ class CollectionHtmlParser extends HtmlParser
                     $matche['name']
                 )
             );
-
             preg_match_all(
                 '/\s*(?<name>.*)\s*--\s*(?<artist>.*)/',
                 $matche['name'],
                 $matches2,
                 PREG_SET_ORDER
             );
-
             $song = new CollectionSong();
             $song->hasCopyright = $matche['status'] === 'checked' ? true : false;
             $song->id = $matche['id'] + 0;

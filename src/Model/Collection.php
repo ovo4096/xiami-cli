@@ -57,7 +57,7 @@ class Collection
                             return $newSong->id === $song->id;
                         });
                         $replaceSong = array_shift($result);
-                        $replaceSong->introduction = $song->introduction;
+                        $replaceSong->merge($song);
                         $song = $replaceSong;
                     }
                 }
