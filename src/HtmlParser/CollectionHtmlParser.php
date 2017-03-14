@@ -8,12 +8,9 @@ class CollectionHtmlParser extends HtmlParser
 {
     public function getTitle()
     {
-        $crawler = new Crawler($this->html);
-        $html = $crawler->filter('h2')->html();
-        $matches = [];
         preg_match(
-            '/[\s\S]*?(?:(?=<))/',
-            $html,
+            '/(?<=h2>)[\s\S]*?(?:(?=<))/',
+            $this->html,
             $matches
         );
         return trim(html_entity_decode($matches[0], ENT_QUOTES));
@@ -32,6 +29,11 @@ class CollectionHtmlParser extends HtmlParser
             $this->html,
             $matches
         );
+
+        if (count($matches) === 0) {
+            return null;
+        }
+
         preg_match_all(
             '/(?<=>).*?(?=<)/',
             $matches[0],
@@ -56,11 +58,15 @@ class CollectionHtmlParser extends HtmlParser
 
     public function getIntroduction()
     {
-        return self::formatHtmlTextareaToConsoleTextblock(
-            (new Crawler($this->html))
-                ->filter('.info_intro_full')
-                ->html()
+        preg_match(
+            '/full">[\s\S]*?>(?<intro>[\s\S]*?)<\/div>/',
+            $this->html,
+            $matches
         );
+        if (count($matches) === 0) {
+            return null;
+        }
+        return self::formatHtmlTextareaToConsoleTextblock($matches['intro']);
     }
 
     public function getTrackList()
@@ -69,7 +75,6 @@ class CollectionHtmlParser extends HtmlParser
         $crawler = new Crawler($this->html);
 
         $html = $crawler->filter('.quote_song_list > ul')->html();
-        $matches = [];
         preg_match_all(
             '/(?<status>checked|disabled)[\s\S]*?e="(?<id>\d*)"[\s\S]*?e">(?<name>[\s\S]*?)<\/span[\s\S]*?“(?<intro>[\s\S]*?)”/',
             $html,

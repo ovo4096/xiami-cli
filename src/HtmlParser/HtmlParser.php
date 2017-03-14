@@ -20,7 +20,11 @@ abstract class HtmlParser
                     preg_replace(
                         '/\<(?!br).*?(\s*)?\/?\>/i',
                         '',
-                        trim($html)
+                        preg_replace(
+                            '/\s+/',
+                            ' ',
+                            trim($html)
+                        )
                     )
                 ),
                 ENT_QUOTES
