@@ -152,7 +152,7 @@ class ShowCommand extends Command
 
             if (!empty($album->summary)) {
                 $io->section('Summary');
-                $io->block($album->summary);
+                $io->writeln($album->summary);
             }
 
             $io->section('Track List');
@@ -198,7 +198,7 @@ class ShowCommand extends Command
 
             if (!empty($collection->introduction)) {
                 $io->section('Introduction');
-                $io->block($collection->introduction);
+                $io->writeln($collection->introduction);
             }
 
             $io->section('Track List');

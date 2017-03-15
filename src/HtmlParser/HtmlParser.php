@@ -15,16 +15,12 @@ abstract class HtmlParser
         return html_entity_decode(
             html_entity_decode(
                 preg_replace(
-                    '/\<br(\s*)?\/?\>/i',
-                    "\n",
+                    '/\<.*?(\s*)?\/?\>/i',
+                    '',
                     preg_replace(
-                        '/\<(?!br).*?(\s*)?\/?\>/i',
-                        '',
-                        preg_replace(
-                            '/\s+/',
-                            ' ',
-                            trim($html)
-                        )
+                        '/ +/',
+                        ' ',
+                        trim($html)
                     )
                 ),
                 ENT_QUOTES
