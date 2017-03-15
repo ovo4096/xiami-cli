@@ -13,4 +13,25 @@ abstract class Command extends SymfonyCommand
         parent::__construct($name);
         $this->cache = new FilesystemAdapter('xiami-cli');
     }
+
+    public function getUserCache()
+    {
+        $userCache = $this->cache->getItem('user');
+        if (!$userCache->isHit()) {
+            return null;
+        }
+        return $userCache->get();
+    }
+
+    public function setUserCache($user)
+    {
+        $userCache = $this->cache->getItem('user');
+        $userCache->set($user);
+        $this->cache->save($userCache);
+    }
+
+    public function deleteUserCache()
+    {
+        $this->cache->deleteItem('user');
+    }
 }

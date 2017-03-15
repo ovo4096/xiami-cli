@@ -17,14 +17,13 @@ class LoginoutCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new AwesomeStyle($input, $output);
-        $userCache = $this->cache->getItem('user');
 
-        if (!$userCache->isHit()) {
+        if ($this->getUserCache() === null) {
             $io->error('You are not logged in');
             return;
         }
-
-        $this->cache->deleteItem('user');
+        
+        $this->deleteUserCache();
         $io->success('Logout successful');
     }
 }

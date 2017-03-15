@@ -32,10 +32,9 @@ class LoginCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new AwesomeStyle($input, $output);
-        $userCache = $this->cache->getItem('user');
-
-        if ($userCache->isHit()) {
-            $user = $userCache->get();
+        
+        $user = $this->getUserCache();
+        if ($user !== null) {
             $io->error('You are already logged in as ' . $user->name);
             return;
         }
@@ -46,8 +45,7 @@ class LoginCommand extends Command
                 $input->getArgument('password')
             );
             $io->success('Login successful');
-            $userCache->set($user);
-            $this->cache->save($userCache);
+            $this->setUserCache($user);
         } catch (UserLoginException $e) {
             $io->error($e->getMessage());
         }
