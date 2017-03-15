@@ -1,10 +1,9 @@
 <?php
 namespace Xiami\Console\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Xiami\Console\Style\AwesomeStyle;
 
 class LoginoutCommand extends Command
 {
@@ -12,21 +11,20 @@ class LoginoutCommand extends Command
     {
         $this
             ->setName('loginout')
-            ->setDescription('loginout description')
-            ->setHelp('loginout help');
+            ->setDescription('User loginout');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $cache = new FilesystemAdapter('xiami-cli');
-        $userCache = $cache->getItem('user');
+        $io = new AwesomeStyle($input, $output);
+        $userCache = $this->cache->getItem('user');
 
         if (!$userCache->isHit()) {
-            $output->writeln('<error>You are not logged in</error>');
+            $io->error('You are not logged in');
             return;
         }
 
-        $cache->deleteItem('user');
-        $output->writeln('<info>Logout successful</info>');
+        $this->cache->deleteItem('user');
+        $io->success('Logout successful');
     }
 }

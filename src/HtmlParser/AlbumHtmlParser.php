@@ -16,7 +16,7 @@ class AlbumHtmlParser extends HtmlParser
         if (!isset($matches['title'])) {
             return null;
         }
-        return trim($matches['title']);
+        return html_entity_decode(trim($matches['title']), ENT_QUOTES);
     }
 
     public function getArtist()
