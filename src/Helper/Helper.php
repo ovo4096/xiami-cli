@@ -13,9 +13,9 @@ class Helper
     public static function download(Song $song, $path, $quality, OutputStyle $io, OutputInterface $output)
     {
         if (!$song->hasCopyright) {
+            $io->writeln(' <error>No copyright</error> <info>' . $song->title . ' - ' . $song->artist . '</info>');
             return;
         }
-
         $quality = strtoupper($quality);
         $filePath = $path . '/' . $song->title . ' - ' . $song->artist;
         switch ($quality) {
@@ -49,7 +49,7 @@ class Helper
                 if ($totalSize > 0 && $before) {
                     $progressBar = new ProgressBar($output, $totalSize);
                     $progressBar->setMessage('<info>' . $song->title . ' - ' . $song->artist . '</info>', 'filename');
-                    $progressBar->setFormat(' %filename% [%bar%] %percent:3s%%');
+                    $progressBar->setFormat(' [%bar%] %filename% %percent:3s%%');
                     $before = false;
                 }
                 if (!$before) {
