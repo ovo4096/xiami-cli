@@ -12,6 +12,10 @@ class Helper
 {
     public static function download(Song $song, $path, $quality, OutputStyle $io, OutputInterface $output)
     {
+        if (!$song->hasCopyright) {
+            return;
+        }
+
         $quality = strtoupper($quality);
         $filePath = $path . '/' . $song->title . ' - ' . $song->artist;
         switch ($quality) {
