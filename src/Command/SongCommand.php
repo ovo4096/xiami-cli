@@ -171,12 +171,10 @@ class SongCommand extends Command
                 if ($totalSize > 0 && $before) {
                     $progressBar = new ProgressBar($output, $totalSize);
                     $progressBar->setMessage('<info>' . $song->title . ' - ' . $song->artist . '</info>', 'filename');
-                    $progressBar->setMessage(round($currentSize / 1024 / 1024, 2) . 'MiB', 'current_size');
-                    $progressBar->setFormat(' %filename% %current_size% [%bar%] %percent:3s%%');
+                    $progressBar->setFormat(' %filename% [%bar%] %percent:3s%%');
                     $before = false;
                 }
                 if (!$before) {
-                    $progressBar->setMessage(round($currentSize / 1024 / 1024, 2) . 'MiB', 'current_size');
                     $progressBar->setProgress($currentSize);
                 }
             }
