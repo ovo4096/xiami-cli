@@ -27,17 +27,17 @@ class CollectionCommand extends Command
                     'download',
                     null,
                     InputOption::VALUE_REQUIRED,
-                    'To download this song to the specified path'
+                    'Download path'
                 ),
                 new InputOption(
                     'quality',
                     null,
                     InputOption::VALUE_REQUIRED,
-                    'Specify the download audio quality',
+                    'Download audio quality',
                     'high'
                 )
             ])
-            ->setDescription('Show information or download of collection');
+            ->setDescription('Get the collection');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

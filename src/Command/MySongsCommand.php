@@ -23,16 +23,17 @@ class MySongsCommand extends Command
                     'download',
                     null,
                     InputOption::VALUE_REQUIRED,
-                    'To download this song to the specified path'
+                    'Download path'
                 ),
                 new InputOption(
                     'quality',
                     null,
                     InputOption::VALUE_REQUIRED,
-                    'Specify the download audio quality',
+                    'Download audio quality',
                     'high'
                 )
-            ]);
+            ])
+            ->setDescription('Get the user\'s favorite songs');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
