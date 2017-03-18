@@ -3,12 +3,13 @@ namespace Xiami\Console\Model;
 
 use Xiami\Console\Exception\GetPlaylistJsonException;
 use GuzzleHttp\Client;
+use Xiami\Console\Helper\Helper;
 
 class Song
 {
-    public const LOSSLESS_QUALITY = 'LOSSLESS';
-    public const HIGH_QUALITY = 'HIGH';
-    public const LOW_QUALITY = 'LOW';
+    const LOSSLESS_QUALITY = 'LOSSLESS';
+    const HIGH_QUALITY = 'HIGH';
+    const LOW_QUALITY = 'LOW';
 
     public $id;
     public $title;
@@ -16,7 +17,7 @@ class Song
     public $lyricist;
     public $composer;
     public $arranger;
-    
+
     public $albumId;
     public $albumTitle;
 
@@ -30,7 +31,7 @@ class Song
         $client = new Client();
         $response = $client->get("http://www.xiami.com/song/playlist/id/$id/object_name/default/object_id/0/cat/json");
 
-        $json = json_decode((string) $response->getBody());
+        $json = json_decode((string)$response->getBody());
 
         if ((!empty($json->message) && count($json->data->trackList) === 0) || !$json->status) {
             throw new GetPlaylistJsonException($json->message);
@@ -49,23 +50,36 @@ class Song
         $song->lyricist = trim(html_entity_decode($json->songwriters, ENT_QUOTES));
         $song->composer = trim(html_entity_decode($json->composer, ENT_QUOTES));
         $song->arranger = trim(html_entity_decode($json->arrangement, ENT_QUOTES));
-        
+
         $song->albumId = $json->albumId + 0;
         $song->albumTitle = trim(html_entity_decode($json->album_name, ENT_QUOTES));
 
         $song->lyricsUrl = $json->lyric_url;
         $song->hasCopyright = true;
 
-        usort($json->allAudios, function ($a, $b) {
-            return $a->fileSize < $b->fileSize;
-        });
-
-        foreach ($json->allAudios as $audioJSON) {
-            if (!isset($song->audioUrls[$audioJSON->audioQualityEnum])) {
-                $song->audioUrls[$audioJSON->audioQualityEnum] = [];
-            }
-            $song->audioUrls[$audioJSON->audioQualityEnum][] = trim($audioJSON->filePath);
-        }
+        $client = new Client();
+        $response = $client->get(
+            'http://www.xiami.com/song/gethqsong/sid/' . $song->id,
+            [
+                'headers' => [
+                    'Referer' => 'http://www.xiami.com/'
+                ]
+            ]
+        );
+        $hqJSON = json_decode((string)$response->getBody());
+//        usort($json->allAudios, function ($a, $b) {
+//            return $a->fileSize < $b->fileSize;
+//        });
+//
+//        foreach ($json->allAudios as $audioJSON) {
+//            if (!isset($song->audioUrls[$audioJSON->audioQualityEnum])) {
+//                $song->audioUrls[$audioJSON->audioQualityEnum] = [];
+//            }
+//            $song->audioUrls[$audioJSON->audioQualityEnum][] = trim($audioJSON->filePath);
+//        }
+        $song->audioUrls[Song::LOSSLESS_QUALITY] = [];
+        $song->audioUrls[Song::HIGH_QUALITY] = [Helper::getLocation($hqJSON->location)];
+        $song->audioUrls[Song::LOW_QUALITY] = [Helper::getLocation($json->location)];
 
         return $song;
     }
