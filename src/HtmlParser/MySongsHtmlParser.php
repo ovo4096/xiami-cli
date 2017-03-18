@@ -1,10 +1,9 @@
 <?php
 namespace Xiami\Console\HtmlParser;
 
-use Xiami\Console\Model\Song;
-use Xiami\Console\Model\Artist;
+use Xiami\Console\Model\MySong;
 
-class FavoriteSongParser extends Parser
+class MySongsHtmlParser extends HtmlParser
 {
     public function getSongs()
     {
@@ -15,19 +14,16 @@ class FavoriteSongParser extends Parser
             $matches,
             PREG_SET_ORDER
         );
-
         $songs = [];
-        foreach ($matches as $matche) {
-            $song = new Song();
-            $song->id = $matche['id'] + 0;
-            $song->name = html_entity_decode($matche['name'], ENT_QUOTES);
-            $song->inStock = $matche['inStock'] === 'checked';
-            $song->rate = $matche['rate'] + 0;
-            $song->artists = $this->getArtists($matche['artists']);
-
+        foreach ($matches as $match) {
+            $song = new MySong();
+            $song->id = $match['id'] + 0;
+            $song->title = trim(html_entity_decode($match['name'], ENT_QUOTES));
+            $song->hasCopyright = $match['inStock'] === 'checked';
+            $song->rate = $match['rate'] + 0;
+            $song->artist = $this->getArtists($match['artists']);
             $songs[] = $song;
         }
-
         return $songs;
     }
 
@@ -39,6 +35,8 @@ class FavoriteSongParser extends Parser
             $this->html,
             $matches
         );
+
+        if (!isset($matches[0][0])) return 1;
 
         return ceil($matches[0][0] / 25);
     }
@@ -52,10 +50,12 @@ class FavoriteSongParser extends Parser
             $matches
         );
 
+        if (!isset($matches[0][0])) return 1;
+
         return $matches[0][0] + 0;
     }
 
-    protected function getArtists($html)
+    private function getArtists($html)
     {
         $matches = [];
         preg_match_all(
@@ -64,14 +64,10 @@ class FavoriteSongParser extends Parser
             $matches,
             PREG_SET_ORDER
         );
-
-        $artists = [];
-        foreach ($matches as $matche) {
-            $artist = new Artist();
-            $artist->name = html_entity_decode($matche['name'], ENT_QUOTES);
-            $artists[] = $artist;
+        $names = [];
+        foreach ($matches as $match) {
+            $names[] = trim(html_entity_decode($match['name'], ENT_QUOTES));
         }
-
-        return $artists;
+        return implode(', ', $names);
     }
 }

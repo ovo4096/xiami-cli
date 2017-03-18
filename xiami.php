@@ -12,6 +12,7 @@ use Xiami\Console\Command\LoginoutCommand;
 use Xiami\Console\Command\SongCommand;
 use Xiami\Console\Command\AlbumCommand;
 use Xiami\Console\Command\CollectionCommand;
+use Xiami\Console\Command\MySongsCommand;
 
 $application = new Application();
 $application->add(new LoginCommand());
@@ -19,4 +20,5 @@ $application->add(new LoginoutCommand());
 $application->add(new SongCommand());
 $application->add(new AlbumCommand());
 $application->add(new CollectionCommand());
+$application->add(new MySongsCommand());
 $application->run();

@@ -67,16 +67,7 @@ class Song
             ]
         );
         $hqJSON = json_decode((string)$response->getBody());
-//        usort($json->allAudios, function ($a, $b) {
-//            return $a->fileSize < $b->fileSize;
-//        });
-//
-//        foreach ($json->allAudios as $audioJSON) {
-//            if (!isset($song->audioUrls[$audioJSON->audioQualityEnum])) {
-//                $song->audioUrls[$audioJSON->audioQualityEnum] = [];
-//            }
-//            $song->audioUrls[$audioJSON->audioQualityEnum][] = trim($audioJSON->filePath);
-//        }
+
         $song->audioUrls[Song::LOSSLESS_QUALITY] = [];
         $song->audioUrls[Song::HIGH_QUALITY] = [Helper::getLocation($hqJSON->location)];
         $song->audioUrls[Song::LOW_QUALITY] = [Helper::getLocation($json->location)];
