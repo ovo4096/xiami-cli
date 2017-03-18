@@ -10,7 +10,7 @@ use Xiami\Console\Model\Song;
 
 class Helper
 {
-    public static function download(Song $song, $path, $quality, OutputStyle $io, OutputInterface $output)
+    private static function onceDownload(Song $song, $path, $quality, OutputStyle $io, OutputInterface $output)
     {
         if (!$song->hasCopyright) {
             $io->writeln(' <error>No copyright</error> <info>' . $song->title . ' - ' . $song->artist . '</info>');
@@ -21,7 +21,13 @@ class Helper
         $title = preg_replace("/\\//", "\\", $song->title);
         $artist = preg_replace("/\\//", "\\", $song->title);
 
-        $filePath = $path . '/' . $title . ' - ' . $artist;
+        $filename = $title . ' - ' . $artist;
+
+        if (strlen($filename) > 220) {
+            $filename = md5($filename);
+        }
+
+        $filePath = $path . '/' . $filename;
         switch ($quality) {
             case Song::LOSSLESS_QUALITY:
                 if (isset($song->audioUrls[Song::LOSSLESS_QUALITY][0])) {
@@ -45,6 +51,12 @@ class Helper
         $matches = [];
         preg_match('/.*(?<ext>\..*?)(?=\?)/', $url, $matches);
         $filePath .= $matches['ext'];
+
+        if (file_exists($filePath)) {
+            $io->writeln(' <info>' . $song->title . ' - ' . $song->artist . '</info> 100%');
+            return;
+        }
+
         $client = new Client();
         $before = true;
         $progressBar = null;
@@ -59,13 +71,23 @@ class Helper
                 if (!$before) {
                     $progressBar->setProgress($currentSize);
                 }
-            }
+            },
+            'timeout' => 30
         ]);
         file_put_contents($filePath, $response->getBody());
         $progressBar->finish();
         $io->newLine();
     }
 
+    public static function download(Song $song, $path, $quality, OutputStyle $io, OutputInterface $output) {
+
+        try {
+            self::onceDownload($song, $path, $quality, $io, $output);
+        } catch (\Exception $e) {
+            $io->writeln(' <error>' . $e->getMessage() . '</error> <info>' . $song->title . ' - ' . $song->artist . '</info>');
+            self::download($song, $path, $quality, $io, $output);
+        }
+    }
 
     public static function getLocation($location)
     {
