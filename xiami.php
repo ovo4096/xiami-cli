@@ -14,7 +14,15 @@ use Xiami\Console\Command\AlbumCommand;
 use Xiami\Console\Command\CollectionCommand;
 use Xiami\Console\Command\MySongsCommand;
 
-$application = new Application();
+$application = new Application('
+                                                                                                   
+ _|      _|   _|_|_|     _|_|     _|      _|   _|_|_|                  _|_|_|   _|         _|_|_|  
+   _|  _|       _|     _|    _|   _|_|  _|_|     _|                  _|         _|           _|    
+     _|         _|     _|_|_|_|   _|  _|  _|     _|     _|_|_|_|_|   _|         _|           _|    
+   _|  _|       _|     _|    _|   _|      _|     _|                  _|         _|           _|    
+ _|      _|   _|_|_|   _|    _|   _|      _|   _|_|_|                  _|_|_|   _|_|_|_|   _|_|_|  
+                                                                                                   
+<info>xiami-cli</info> version', '<comment>1.0</comment>');
 $application->add(new LoginCommand());
 $application->add(new LoginoutCommand());
 $application->add(new SongCommand());
