@@ -1,0 +1,6 @@
+{
+  "directories": ["src/", "vendor/"],
+  "main": "xiami",
+  "output": "dist/xiami.phar",
+  "stub": true
+}
