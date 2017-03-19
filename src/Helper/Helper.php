@@ -84,6 +84,7 @@ class Helper
         try {
             self::onceDownload($song, $path, $quality, $io, $output);
         } catch (\Exception $e) {
+            $io->newLine();
             $io->writeln(' <error>' . $e->getMessage() . '</error> <info>' . $song->title . ' - ' . $song->artist . '</info>');
             self::download($song, $path, $quality, $io, $output);
         }
