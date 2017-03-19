@@ -53,7 +53,15 @@ class MySongsCommand extends Command
         $pageIndex = $page === 'all' ? 1 : $page;
 
         do {
-            $html = (string)(new Client())->get("http://www.xiami.com/space/lib-song/u/$userId/page/$pageIndex")->getBody();
+            $client = new Client();
+            try {
+                $response = $client->get("http://www.xiami.com/space/lib-song/u/$userId/page/$pageIndex");
+                $html = (string)$response->getBody();
+            } catch (\Exception $e) {
+                $this->execute($input, $output);
+                return;
+            }
+
             $pageIndex++;
             $htmlParser = new MySongsHtmlParser($html);
 
