@@ -2,3 +2,4 @@
 /.idea/
 composer.lock
 box.phar
+box.json.dist

@@ -5,13 +5,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xiami\Console\Style\AwesomeStyle;
 
-class LoginoutCommand extends Command
+class LogoutCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('loginout')
-            ->setDescription('User loginout');
+            ->setName('logout')
+            ->setDescription('User logout');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

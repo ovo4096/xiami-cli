@@ -8,7 +8,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Xiami\Console\Command\LoginCommand;
-use Xiami\Console\Command\LoginoutCommand;
+use Xiami\Console\Command\LogoutCommand;
 use Xiami\Console\Command\SongCommand;
 use Xiami\Console\Command\AlbumCommand;
 use Xiami\Console\Command\CollectionCommand;
@@ -16,17 +16,16 @@ use Xiami\Console\Command\MySongsCommand;
 use Xiami\Console\Command\DailyRecommendationCommand;
 
 $application = new Application('
-                                                                                                   
  _|      _|   _|_|_|     _|_|     _|      _|   _|_|_|                  _|_|_|   _|         _|_|_|  
    _|  _|       _|     _|    _|   _|_|  _|_|     _|                  _|         _|           _|    
      _|         _|     _|_|_|_|   _|  _|  _|     _|     _|_|_|_|_|   _|         _|           _|    
    _|  _|       _|     _|    _|   _|      _|     _|                  _|         _|           _|    
  _|      _|   _|_|_|   _|    _|   _|      _|   _|_|_|                  _|_|_|   _|_|_|_|   _|_|_|  
-                                                                                                   
+
 <info>xiami-cli</info> version', '<comment>1.0</comment>');
 
 $application->add(new LoginCommand());
-$application->add(new LoginoutCommand());
+$application->add(new LogoutCommand());
 $application->add(new SongCommand());
 $application->add(new AlbumCommand());
 $application->add(new CollectionCommand());

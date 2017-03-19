@@ -33,7 +33,7 @@ xiami album 9986 --download ~/Music/Albums
 xiami collection 9988 --download ~/Music/Collections
 ```
 
-### Download from your favorite collection
+### Your favorite collection
 
 You need to login or specify userid to use this command.
 
@@ -41,4 +41,12 @@ You need to login or specify userid to use this command.
 xiami my-songs --download ~/Music --page all 
 xiami my-songs --download ~/Music --page 6
 xiami my-songs --download ~/Music --page all --userid 123 
+```
+
+### Daily recommendation
+
+Download Daily Recommendation Songs
+
+```
+$ xiami daily-recommendation --download ~/Music
 ```
