@@ -74,7 +74,12 @@ class MySongsCommand extends Command
             if ($downloadPath !== null) {
                 foreach ($currentPageSongs as $song) {
                     if ($song->hasCopyright) {
-                        $song->merge(Song::get($song->id));
+                        again:
+                        try {
+                            $song->merge(Song::get($song->id));
+                        } catch (\Exception $e) {
+                            goto again;
+                        }
                     }
                     Helper::download($song, $downloadPath, $downloadQuality, $io, $output);
                 }
