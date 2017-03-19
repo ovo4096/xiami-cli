@@ -22,7 +22,7 @@ $application = new Application('
    _|  _|       _|     _|    _|   _|      _|     _|                  _|         _|           _|    
  _|      _|   _|_|_|   _|    _|   _|      _|   _|_|_|                  _|_|_|   _|_|_|_|   _|_|_|  
 
-<info>xiami-cli</info> version', '<comment>1.0</comment>');
+<info>xiami-cli</info> version', '<comment>1.2</comment>');
 
 $application->add(new LoginCommand());
 $application->add(new LogoutCommand());
