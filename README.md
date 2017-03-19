@@ -28,9 +28,9 @@ $ xiami logout
 You can use Id to download albums, songs and collection.
 
 ```
-xiami song 9998 --download ~/Music
-xiami album 9986 --download ~/Music/Albums
-xiami collection 9988 --download ~/Music/Collections
+$ xiami song 9998 --download ~/Music
+$ xiami album 9986 --download ~/Music/Albums
+$ xiami collection 9988 --download ~/Music/Collections
 ```
 
 ### Download from your favorite collection
@@ -38,7 +38,7 @@ xiami collection 9988 --download ~/Music/Collections
 You need to login or specify userid to use this command.
 
 ```
-xiami my-songs --download ~/Music --page all 
-xiami my-songs --download ~/Music --page 6
-xiami my-songs --download ~/Music --page all --userid 123 
+$ xiami my-songs --download ~/Music --page all 
+$ xiami my-songs --download ~/Music --page 6
+$ xiami my-songs --download ~/Music --page all --userid 123 
 ```
