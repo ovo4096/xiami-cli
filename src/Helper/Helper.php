@@ -19,7 +19,7 @@ class Helper
         $quality = strtoupper($quality);
 
         $title = preg_replace("/\\//", "\\", $song->title);
-        $artist = preg_replace("/\\//", "\\", $song->title);
+        $artist = preg_replace("/\\//", "\\", $song->artist);
 
         $filename = $title . ' - ' . $artist;
 
